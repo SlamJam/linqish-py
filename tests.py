@@ -7,6 +7,21 @@ class TestCase(unittest.TestCase):
             TypeError, 'None is not an Iterable',
             lambda: Query(None))
 
+    def test_where(self):
+        self.assertSequenceEqual(
+            [2, 3],
+            list(Query([1, 2, 3]).where(lambda x: x > 1)))
+
+    def test_where_with_index(self):
+        self.assertSequenceEqual(
+            ['b', 'c'],
+            list(Query(['a', 'b', 'c']).where(lambda i,x: i > 0)))
+
+    def test_where_not_function(self):
+        self.assertRaisesRegexp(
+            Exception, 'None is not a Python function',
+            lambda: Query([]).where(None))
+
     def test_select(self):
         self.assertSequenceEqual(
             [1, 2, 3],
@@ -34,18 +49,4 @@ class TestCase(unittest.TestCase):
             ValueError, 'value of selector has wrong number of args',
             lambda: Query([]).select((lambda: None)))
 
-    def test_where(self):
-        self.assertSequenceEqual(
-            [2, 3],
-            list(Query([1, 2, 3]).where(lambda x: x > 1)))
-
-    def test_where_with_index(self):
-        self.assertSequenceEqual(
-            ['b', 'c'],
-            list(Query(['a', 'b', 'c']).where(lambda i,x: i > 0)))
-
-    def test_where_not_function(self):
-        self.assertRaisesRegexp(
-            Exception, 'None is not a Python function',
-            lambda: Query([]).where(None))
 
