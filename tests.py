@@ -3,14 +3,14 @@ import unittest
 
 class TestCase(unittest.TestCase):
     def test_select(self):
-        self.assertItemsEqual(
+        self.assertSequenceEqual(
             [1, 2, 3],
             Query([1, 2, 3]).select(lambda x: x))
 
     def test_select_with_index(self):
-        self.assertItemsEqual(
+        self.assertSequenceEqual(
             [(0,'a'),(1,'b'),(2,'c')],
-            Query(['a', 'b', 'c']).select(lambda i,x: (i,x)))
+            list(Query(['a', 'b', 'c']).select(lambda i,x: (i,x))))
 
     def test_select_selector_raises(self):
         def raiser(x):
