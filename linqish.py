@@ -6,6 +6,15 @@ class Query(object):
     def _get_number_of_args(self, func):
         return len(inspect.getargspec(func)[0])
 
+    def _normalize_selector(self, func):
+        number_of_args = self._get_number_of_args(func)
+        if number_of_args == 1:
+            return lambda i, x: func(x)
+        if number_of_args == 2:
+            return func
+        else:
+            raise ValueError('value of selector has wrong number of args')
+
     def __init__(self, source):
         if not isinstance(source, collections.Iterable):
             raise TypeError('{!r} is not an Iterable'.format(source))
@@ -30,13 +39,11 @@ class Query(object):
         else:
             raise ValueError('value of selector has wrong number of args')
 
-    def selectmany(self, selector, resultSelector=None):
-        if not resultSelector:
-            return itertools.chain.from_iterable(self.select(selector))
-        else:
-            return itertools.chain.from_iterable(itertools.imap(
-                lambda x: itertools.imap(lambda y: resultSelector(x[0], y), selector(x[1])),
-                enumerate(self._source)))
+    def selectmany(self, selector, resultSelector=lambda i, x: x):
+        selector = self._normalize_selector(selector)
+        return itertools.chain.from_iterable(itertools.imap(
+            lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
+            enumerate(self._source)))
 
     def take(self, count):
         enumerator = enumerate(self._source)

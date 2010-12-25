@@ -76,6 +76,5 @@ class TestCase(unittest.TestCase):
 
     def test_selectmany_with_result_selector(self):
         self.assertSequenceEqual(
-            [(0,1), (0,2), (1,3), (1,4)],
-            list(Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer)))
-        )
+            [((1,2), 1), ((1,2), 2), ((3,4), 3), ((3,4), 4)],
+            list(Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer))))
