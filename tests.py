@@ -44,3 +44,8 @@ class TestCase(unittest.TestCase):
             ['b', 'c'],
             list(Query(['a', 'b', 'c']).where(lambda i,x: i > 0)))
 
+    def test_where_not_function(self):
+        self.assertRaisesRegexp(
+            Exception, 'None is not a Python function',
+            lambda: Query([]).where(None))
+
