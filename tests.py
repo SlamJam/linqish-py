@@ -106,3 +106,6 @@ class TestCase(unittest.TestCase):
 
     def test_skip_count_larger_than_length(self):
         self.assertSequenceEqual([], list(Query([1,2,3]).skip(10)))
+
+    def test_takewhile(self):
+        self.assertSequenceEqual([1,2], list(Query([1,2,3]).takewhile(lambda x: x < 3)))

@@ -52,13 +52,6 @@ class Query(object):
             return self._source
         return itertools.islice(self._source, count, None)
 
-    def takeWhile(self, predicate):
-        iter = self._source.__iter__()
-        try:
-            while True:
-                item = next(iter)
-                if predicate(item):
-                    break
-        except StopIteration:
-            pass
+    def takewhile(self, predicate):
+        return itertools.takewhile(predicate, self._source)
 
