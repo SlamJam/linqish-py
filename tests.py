@@ -89,5 +89,5 @@ class TestCase(unittest.TestCase):
             ValueError, '<function <lambda> at .*>, the value of resultSelector, has wrong number of args',
             lambda: Query([]).selectmany(lambda x: x, lambda: None))
 
-    def test_task(self):
+    def test_take(self):
         self.assertSequenceEqual([1,2], list(Query([1,2,3]).take(2)))
