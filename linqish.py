@@ -48,6 +48,8 @@ class Query(object):
         return itertools.islice(self._source, count)
 
     def skip(self, count):
+        if count < 0:
+            return self._source
         return itertools.islice(self._source, count, None)
 
     def takeWhile(self, predicate):
