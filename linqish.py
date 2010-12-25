@@ -19,7 +19,7 @@ class Query(object):
             first, second = itertools.tee(self._source)
             return itertools.compress(first, itertools.starmap(predicate, enumerate(second)))
         else:
-            raise Exception()
+            raise ValueError('value of predicate has wrong number of args')
 
     def select(self, selector):
         number_of_args = self._get_number_of_args(selector)
