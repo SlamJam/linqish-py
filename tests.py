@@ -117,3 +117,15 @@ class TestCase(unittest.TestCase):
         self.assertRaisesRegexp(
             TypeError, 'None, the value of predicate, is not a function',
             lambda: Query([1,2,3]).takewhile(None))
+
+    def test_skipwhile(self):
+        self.assertSequenceEqual([3], list(Query([1,2,3]).skipwhile(lambda x: x < 3)))
+
+    def test_skipwhile_with_index(self):
+        self.assertSequenceEqual([3], list(Query([1,2,3]).skipwhile(lambda i,x: i == 0 or x == 2)))
+
+    def test_skipwhile_predicate_not_function(self):
+        self.assertRaisesRegexp(
+            TypeError, 'None, the value of predicate, is not a function',
+            lambda: Query([1,2,3]).skipwhile(None))
+

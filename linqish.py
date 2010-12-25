@@ -59,3 +59,8 @@ class Query(object):
             operator.itemgetter(1),
             itertools.takewhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
 
+    def skipwhile(self, predicate):
+        predicate = self._normalize_func(predicate, 'predicate')
+        return itertools.imap(
+            operator.itemgetter(1),
+            itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
