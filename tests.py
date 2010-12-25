@@ -24,6 +24,11 @@ class TestCase(unittest.TestCase):
             Exception, 'Test',
             lambda: list(Query([1, 2, 3]).select(raiser)))
 
+    def test_select_not_function(self):
+        self.assertRaisesRegexp(
+            Exception, 'None is not a Python function',
+            lambda: Query([]).select(None))
+
     def test_where(self):
         self.assertSequenceEqual(
             [2, 3],

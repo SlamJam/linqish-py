@@ -8,7 +8,7 @@ class Query(object):
 
     def __init__(self, source):
         if not isinstance(source, collections.Iterable):
-            raise TypeError('{} is not an Iterable'.format(source))
+            raise TypeError('{!r} is not an Iterable'.format(source))
         self._source = iter(source)
 
     def where(self, predicate):
