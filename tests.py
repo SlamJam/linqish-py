@@ -54,4 +54,9 @@ class TestCase(unittest.TestCase):
             ValueError, 'value of selector has wrong number of args',
             lambda: Query([]).select((lambda: None)))
 
+    def test_selectmany(self):
+        self.assertSequenceEqual(
+            [1,2,3,4],
+            list(Query([(1,2),(3,4)]).selectmany(lambda x: x)))
+
 

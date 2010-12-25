@@ -30,10 +30,10 @@ class Query(object):
         else:
             raise ValueError('value of selector has wrong number of args')
 
-    def selectMany(self, selector):
-        for item in self._source:
-            for inner_item in selector(item):
-                yield inner_item
+    def selectmany(self, selector, resultSelector=None):
+        number_of_args = self._get_number_of_args(selector)
+        if number_of_args == 1:
+            return itertools.chain.from_iterable(itertools.imap(selector, self._source))
 
     def take(self, count):
         enumerator = enumerate(self._source)
