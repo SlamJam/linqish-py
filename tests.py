@@ -5,7 +5,7 @@ class TestCase(unittest.TestCase):
     def test_select(self):
         self.assertSequenceEqual(
             [1, 2, 3],
-            Query([1, 2, 3]).select(lambda x: x))
+            list(Query([1, 2, 3]).select(lambda x: x)))
 
     def test_select_with_index(self):
         self.assertSequenceEqual(
@@ -17,7 +17,7 @@ class TestCase(unittest.TestCase):
             raise Exception('Test')
         self.assertRaisesRegexp(
             Exception, 'Test',
-            lambda: Query([1, 2, 3]).select(raiser))
+            lambda: list(Query([1, 2, 3]).select(raiser)))
 
     def test_where(self):
         self.assertSequenceEqual(
