@@ -1,3 +1,4 @@
+import collections
 import inspect
 import itertools
 
@@ -6,16 +7,17 @@ class Query(object):
         return len(inspect.getargspec(func)[0])
 
     def __init__(self, source):
-        if source is None:
-            raise TypeError()
-        self._source = source
+        if not isinstance(source, collections.Iterable):
+            raise TypeError('{} is not an Iterable.'.format(source))
+        self._source = iter(source)
 
     def where(self, predicate):
         number_of_args = self._get_number_of_args(predicate)
         if number_of_args == 1:
             return itertools.ifilter(predicate, self._source)
         elif number_of_args == 2:
-            return itertools.compress(self._source, itertools.starmap(predicate, enumerate(self._source)))
+            first, second = itertools.tee(self._source)
+            return itertools.compress(first, itertools.starmap(predicate, enumerate(second)))
         else:
             raise Exception()
 

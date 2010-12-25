@@ -2,6 +2,11 @@ from linqish import Query
 import unittest
 
 class TestCase(unittest.TestCase):
+    def test_init_source_not_an_iterable(self):
+        self.assertRaisesRegexp(
+            TypeError, 'None is not an Iterable\.',
+            lambda: Query(None))
+
     def test_select(self):
         self.assertSequenceEqual(
             [1, 2, 3],
