@@ -43,6 +43,8 @@ class Query(object):
             enumerate(self._source)))
 
     def take(self, count):
+        if count < 0:
+            return []
         return itertools.islice(self._source, count)
 
     def skip(self, count):

@@ -91,3 +91,6 @@ class TestCase(unittest.TestCase):
 
     def test_take(self):
         self.assertSequenceEqual([1,2], list(Query([1,2,3]).take(2)))
+
+    def test_take_with_negative_count(self):
+        self.assertSequenceEqual([], list(Query([1,2,3]).take(-1)))
