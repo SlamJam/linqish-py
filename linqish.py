@@ -28,7 +28,7 @@ class Query(object):
         elif number_of_args == 2:
             return itertools.starmap(selector, enumerate(self._source))
         else:
-            raise Exception()
+            raise ValueError('value of selector has wrong number of args')
 
     def selectMany(self, selector):
         for item in self._source:
