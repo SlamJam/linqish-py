@@ -92,7 +92,7 @@ class TestCase(unittest.TestCase):
     def test_take(self):
         self.assertSequenceEqual([1,2], list(Query([1,2,3]).take(2)))
 
-    def test_take_with_negative_count(self):
+    def test_take_count_negative(self):
         self.assertSequenceEqual([], list(Query([1,2,3]).take(-1)))
 
     def test_take_count_larger_than_length(self):
@@ -101,7 +101,7 @@ class TestCase(unittest.TestCase):
     def test_skip(self):
         self.assertSequenceEqual([2, 3], list(Query([1,2,3]).skip(1)))
 
-    def test_skip_with_negative_count(self):
+    def test_skip_count_negative(self):
         self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).skip(-1)))
 
     def test_skip_count_larger_than_length(self):
