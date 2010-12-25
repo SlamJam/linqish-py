@@ -24,3 +24,8 @@ class TestCase(unittest.TestCase):
             [2, 3],
             list(Query([1, 2, 3]).where(lambda x: x > 1)))
 
+    def test_where_with_index(self):
+        self.assertSequenceEqual(
+            ['b', 'c'],
+            list(Query(['a', 'b', 'c']).where(lambda i,x: i > 0)))
+

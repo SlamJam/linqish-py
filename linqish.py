@@ -11,9 +11,13 @@ class Query(object):
         self._source = source
 
     def where(self, predicate):
-        for item in self._source:
-            if predicate(item):
-                yield item
+        number_of_args = self._get_number_of_args(predicate)
+        if number_of_args == 1:
+            return itertools.ifilter(predicate, self._source)
+        elif number_of_args == 2:
+            return itertools.compress(self._source, itertools.starmap(predicate, enumerate(self._source)))
+        else:
+            raise Exception()
 
     def select(self, selector):
         number_of_args = self._get_number_of_args(selector)
