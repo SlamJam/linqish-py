@@ -4,7 +4,7 @@ import unittest
 class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
-            TypeError, 'None is not an Iterable',
+            TypeError, 'None, value of source, is not an Iterable',
             lambda: Query(None))
 
     def test_where(self):
@@ -19,12 +19,12 @@ class TestCase(unittest.TestCase):
 
     def test_where_predicate_not_function(self):
         self.assertRaisesRegexp(
-            Exception, 'None is not a Python function',
+            TypeError, 'None, the value of predicate, is not a function',
             lambda: Query([]).where(None))
 
     def test_where_predicate_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, 'value of predicate has wrong number of args',
+            ValueError, '<function <lambda> at .*>, the value of predicate, has wrong number of args',
             lambda: Query([]).where((lambda: None)))
 
     def test_select(self):
@@ -46,12 +46,12 @@ class TestCase(unittest.TestCase):
 
     def test_select_selector_not_function(self):
         self.assertRaisesRegexp(
-            Exception, 'None is not a Python function',
+            TypeError, 'None, the value of selector, is not a function',
             lambda: Query([]).select(None))
 
     def test_select_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, 'value of selector has wrong number of args',
+            ValueError, '.*',
             lambda: Query([]).select((lambda: None)))
 
     def test_selectmany(self):
@@ -66,15 +66,20 @@ class TestCase(unittest.TestCase):
 
     def test_selectmany_selector_not_a_function(self):
         self.assertRaisesRegexp(
-            Exception, 'None is not a Python function',
+            TypeError, 'None, the value of selector, is not a function',
             lambda: Query([]).select(None))
 
     def test_selectmany_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, 'value of selector has wrong number of args',
+            ValueError, '<function <lambda> at .*>, the value of selector, has wrong number of args',
             lambda: Query([]).selectmany(lambda: None))
 
     def test_selectmany_with_result_selector(self):
         self.assertSequenceEqual(
             [((1,2), 1), ((1,2), 2), ((3,4), 3), ((3,4), 4)],
             list(Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer))))
+
+    def test_selectmany_with_result_selector_not_a_function(self):
+        self.assertRaisesRegexp(
+            TypeError, 'None, the value of resultSelector, is not a function',
+            lambda: Query([]).selectmany(lambda x: x, None))
