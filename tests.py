@@ -64,3 +64,7 @@ class TestCase(unittest.TestCase):
             [1, 2, 3, 4, 3, 4],
             list(Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x)))
 
+    def test_selectmany_selector_has_wrong_number_of_args(self):
+        self.assertRaisesRegexp(
+            ValueError, 'value of selector has wrong number of args',
+            lambda: Query([]).selectmany(lambda: None))

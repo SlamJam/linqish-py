@@ -36,6 +36,8 @@ class Query(object):
             return itertools.chain.from_iterable(itertools.imap(selector, self._source))
         elif number_of_args == 2:
             return itertools.chain.from_iterable(itertools.starmap(selector, enumerate(self._source)))
+        else:
+            raise ValueError('value of selector has wrong number of args')
 
     def take(self, count):
         enumerator = enumerate(self._source)
