@@ -64,6 +64,11 @@ class TestCase(unittest.TestCase):
             [1, 2, 3, 4, 3, 4],
             list(Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x)))
 
+    def test_selectmany_selector_not_a_function(self):
+        self.assertRaisesRegexp(
+            Exception, 'None is not a Python function',
+            lambda: Query([]).select(None))
+
     def test_selectmany_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
             ValueError, 'value of selector has wrong number of args',
