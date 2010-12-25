@@ -1,6 +1,7 @@
 import collections
 import inspect
 import itertools
+import operator
 
 class Query(object):
     def _get_number_of_args(self, func):
@@ -53,5 +54,8 @@ class Query(object):
         return itertools.islice(self._source, count, None)
 
     def takewhile(self, predicate):
-        return itertools.takewhile(predicate, self._source)
+        predicate = self._normalize_func(predicate, 'predicate')
+        return itertools.imap(
+            operator.itemgetter(1),
+            itertools.takewhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
 

@@ -109,3 +109,11 @@ class TestCase(unittest.TestCase):
 
     def test_takewhile(self):
         self.assertSequenceEqual([1,2], list(Query([1,2,3]).takewhile(lambda x: x < 3)))
+
+    def test_takewhile_with_index(self):
+        self.assertSequenceEqual([1,2], list(Query([1,2,3]).takewhile(lambda i,x: i == 0 or x == 2)))
+
+    def test_takewhile_predicate_not_function(self):
+        self.assertRaisesRegexp(
+            TypeError, 'None, the value of predicate, is not a function',
+            lambda: Query([1,2,3]).takewhile(None))
