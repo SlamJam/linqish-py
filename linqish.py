@@ -64,3 +64,16 @@ class Query(object):
         return itertools.imap(
             operator.itemgetter(1),
             itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
+
+    def join(self, other, keySelector, otherKeySelector, resultSelector, comparer=operator.gt):
+        otherKeys = dict()
+        for item in other:
+            otherKeys.setdefault(otherKeySelector(item), []).append(item)
+
+        for item in self._source:
+            key = keySelector(item)
+            if key is not None:
+                others = otherKeys.get(key, [])
+                for other in others:
+                    yield resultSelector(item, other)
+
