@@ -1,4 +1,10 @@
+import inspect
+import itertools
+
 class Query(object):
+    def _get_number_of_args(self, func):
+        return len(inspect.getargspec(func)[0])
+
     def __init__(self, source):
         if source is None:
             raise TypeError()
@@ -10,8 +16,13 @@ class Query(object):
                 yield item
 
     def select(self, selector):
-        for item in self._source:
-            yield selector(item)
+        number_of_args = self._get_number_of_args(selector)
+        if number_of_args == 1:
+            return map(selector, self._source)
+        elif number_of_args == 2:
+            return itertools.starmap(selector, enumerate(self._source))
+        else:
+            raise Exception()
 
     def selectMany(self, selector):
         for item in self._source:
