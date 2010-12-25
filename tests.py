@@ -84,7 +84,7 @@ class TestCase(unittest.TestCase):
             TypeError, 'None, the value of resultSelector, is not a function',
             lambda: Query([]).selectmany(lambda x: x, None))
 
-    def test_selectman_result_selector_has_wrong_number_of_args(self):
+    def test_selectmany_result_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
             ValueError, '<function <lambda> at .*>, the value of resultSelector, has wrong number of args',
             lambda: Query([]).selectmany(lambda x: x, lambda: None))
