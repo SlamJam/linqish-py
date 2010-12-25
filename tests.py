@@ -22,7 +22,7 @@ class TestCase(unittest.TestCase):
             Exception, 'None is not a Python function',
             lambda: Query([]).where(None))
 
-    def test_where_predicate_has_incorrect_number_of_args(self):
+    def test_where_predicate_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
             ValueError, 'value of predicate has wrong number of args',
             lambda: Query([]).where((lambda: None)))
@@ -49,7 +49,7 @@ class TestCase(unittest.TestCase):
             Exception, 'None is not a Python function',
             lambda: Query([]).select(None))
 
-    def test_select_selector_has_incorrect_number_of_args(self):
+    def test_select_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
             ValueError, 'value of selector has wrong number of args',
             lambda: Query([]).select((lambda: None)))
