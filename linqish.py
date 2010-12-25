@@ -36,6 +36,8 @@ class Query(object):
         selector = self._normalize_func(selector)
         if not inspect.isfunction(resultSelector):
             raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
+        if self._get_number_of_args(resultSelector) <> 2:
+            raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
         return itertools.chain.from_iterable(itertools.imap(
             lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
             enumerate(self._source)))
