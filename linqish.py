@@ -34,6 +34,8 @@ class Query(object):
         number_of_args = self._get_number_of_args(selector)
         if number_of_args == 1:
             return itertools.chain.from_iterable(itertools.imap(selector, self._source))
+        elif number_of_args == 2:
+            return itertools.chain.from_iterable(itertools.starmap(selector, enumerate(self._source)))
 
     def take(self, count):
         enumerator = enumerate(self._source)

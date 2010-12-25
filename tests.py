@@ -57,6 +57,10 @@ class TestCase(unittest.TestCase):
     def test_selectmany(self):
         self.assertSequenceEqual(
             [1,2,3,4],
-            list(Query([(1,2),(3,4)]).selectmany(lambda x: x)))
+            list(Query([(1,2), (3,4)]).selectmany(lambda x: x)))
 
+    def test_selectmany_with_index(self):
+        self.assertSequenceEqual(
+            [1, 2, 3, 4, 3, 4],
+            list(Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x)))
 
