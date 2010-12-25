@@ -48,17 +48,7 @@ class Query(object):
         return itertools.islice(self._source, count)
 
     def skip(self, count):
-        enumerator = enumerate(self._source)
-        try:
-            while True:
-                index, item = next(enumerator)
-                if index == count:
-                    break
-            while True:
-                index, item = next(enumerator)
-                yield item
-        except StopIteration:
-            pass
+        return itertools.islice(self._source, count, None)
 
     def takeWhile(self, predicate):
         iter = self._source.__iter__()
