@@ -43,15 +43,7 @@ class Query(object):
             enumerate(self._source)))
 
     def take(self, count):
-        enumerator = enumerate(self._source)
-        try:
-            while True:
-                index, item = next(enumerator)
-                if index == count:
-                    break
-                yield item
-        except StopIteration:
-            pass
+        return itertools.islice(self._source, count)
 
     def skip(self, count):
         enumerator = enumerate(self._source)
