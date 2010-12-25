@@ -103,3 +103,6 @@ class TestCase(unittest.TestCase):
 
     def test_skip_with_negative_count(self):
         self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).skip(-1)))
+
+    def test_skip_count_larger_than_length(self):
+        self.assertSequenceEqual([], list(Query([1,2,3]).skip(10)))
