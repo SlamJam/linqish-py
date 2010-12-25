@@ -19,3 +19,8 @@ class TestCase(unittest.TestCase):
             Exception, 'Test',
             lambda: Query([1, 2, 3]).select(raiser))
 
+    def test_where(self):
+        self.assertSequenceEqual(
+            [2, 3],
+            list(Query([1, 2, 3]).where(lambda x: x > 1)))
+
