@@ -24,14 +24,17 @@ class Query(object):
             raise TypeError('{!r}, value of source, is not an Iterable'.format(source))
         self._source = iter(source)
 
+    def __iter__(self):
+        return self._source
+
     def where(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
         first, second = itertools.tee(self._source)
-        return itertools.compress(first, itertools.starmap(predicate, enumerate(second)))
+        return Query(itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
     def select(self, selector):
         selector = self._normalize_func(selector)
-        return itertools.starmap(selector, enumerate(self._source))
+        return Query(itertools.starmap(selector, enumerate(self._source)))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
@@ -39,33 +42,36 @@ class Query(object):
             raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
             raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
-        return itertools.chain.from_iterable(itertools.imap(
+        return Query(itertools.chain.from_iterable(itertools.imap(
             lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
-            enumerate(self._source)))
+            enumerate(self._source))))
 
     def take(self, count):
         if count < 0:
             return []
-        return itertools.islice(self._source, count)
+        return Query(itertools.islice(self._source, count))
 
     def skip(self, count):
         if count < 0:
             return self._source
-        return itertools.islice(self._source, count, None)
+        return Query(itertools.islice(self._source, count, None))
 
     def takewhile(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
-        return itertools.imap(
+        return Query(itertools.imap(
             operator.itemgetter(1),
-            itertools.takewhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
+            itertools.takewhile(lambda x: predicate(x[0],x[1]), enumerate(self._source))))
 
     def skipwhile(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
-        return itertools.imap(
+        return Query(itertools.imap(
             operator.itemgetter(1),
-            itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
+            itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source))))
 
     def join(self, other, keySelector, otherKeySelector, resultSelector):
+        return Query(self._join(other, keySelector, otherKeySelector, resultSelector))
+
+    def _join(self, other, keySelector, otherKeySelector, resultSelector):
         otherKeys = dict()
         for item in other:
             key = otherKeySelector(item)
@@ -80,6 +86,9 @@ class Query(object):
                     yield resultSelector(item, other)
 
     def groupjoin(self, other, keySelector, otherKeySelector, resultSelector):
+        return Query(self._groupjoin(other, keySelector, otherKeySelector, resultSelector))
+
+    def _groupjoin(self, other, keySelector, otherKeySelector, resultSelector):
         otherKeys = dict()
         for item in other:
             key = otherKeySelector(item)
@@ -92,4 +101,4 @@ class Query(object):
             yield resultSelector(item, others)
 
     def concat(self, other):
-        return itertools.chain(self._source, other)
+        return Query(itertools.chain(self._source, other))
