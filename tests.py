@@ -1,6 +1,9 @@
 from linqish import Query
 import unittest
 
+def _pair(first, second):
+    return (first, second)
+
 class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
@@ -132,9 +135,18 @@ class TestCase(unittest.TestCase):
     def test_join(self):
         self.assertSequenceEqual(
             [(1,1),(2,2),(3,3)],
-            list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, lambda x,y: (x,y))))
+            list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, _pair)))
 
     def test_join_preserves_order(self):
+        def mod2(x):
+            return x % 2
         self.assertSequenceEqual(
             [(1,1),(1,3),(2,2),(3,1),(3,3)],
-            list(Query([1,2,3]).join([1,2,3],lambda x: x%2, lambda y:y%2, lambda x,y: (x,y))))
+            list(Query([1,2,3]).join([1,2,3], mod2, mod2, _pair)))
+
+    def test_join_nones_are_discarded(self):
+        def is_even_or_none(x):
+            return (x + 1) % 2 or None
+        self.assertSequenceEqual(
+            [(2,2)],
+            list(Query([1,2,3]).join([1,2,3], is_even_or_none, is_even_or_none, _pair)))
