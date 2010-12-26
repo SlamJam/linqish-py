@@ -65,7 +65,7 @@ class Query(object):
             operator.itemgetter(1),
             itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source)))
 
-    def join(self, other, keySelector, otherKeySelector, resultSelector, comparer=operator.gt):
+    def join(self, other, keySelector, otherKeySelector, resultSelector):
         otherKeys = dict()
         for item in other:
             otherKeys.setdefault(otherKeySelector(item), []).append(item)
