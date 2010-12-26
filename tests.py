@@ -133,3 +133,8 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [(1,1),(2,2),(3,3)],
             list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, lambda x,y: (x,y))))
+
+    def test_join_preserves_order(self):
+        self.assertSequenceEqual(
+            [(1,1),(1,3),(2,2),(3,1),(3,3)],
+            list(Query([1,2,3]).join([1,2,3],lambda x: x%2, lambda y:y%2, lambda x,y: (x,y))))
