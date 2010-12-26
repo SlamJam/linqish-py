@@ -19,13 +19,17 @@ class Query(object):
         else:
             raise ValueError('{!r}, the value of {}, has wrong number of args'.format(func, name))
 
-    def __init__(self, source):
+    def __init__(self, source, _sort_key=None):
         if not isinstance(source, collections.Iterable):
             raise TypeError('{!r}, value of source, is not an Iterable'.format(source))
         self._source = iter(source)
+        self._sort_key = _sort_key
 
     def __iter__(self):
-        return self._source
+        result = self._source
+        if self._sort_key:
+            result = iter(sorted(self._source, key=self._sort_key))
+        return result
 
     def where(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
@@ -102,3 +106,6 @@ class Query(object):
 
     def concat(self, other):
         return Query(itertools.chain(self._source, other))
+
+    def orderby(self, keySelector):
+        return Query(self, _sort_key=keySelector)

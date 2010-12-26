@@ -182,3 +182,6 @@ class TestCase(unittest.TestCase):
 
     def test_concat(self):
         self.assertSequenceEqual([1, 2, 3], list(Query([1]).concat([2,3])))
+
+    def test_orderby(self):
+        self.assertSequenceEqual([0, -1, 1], list(Query([-1, 0, 1]).orderby(lambda x: x**2)))
