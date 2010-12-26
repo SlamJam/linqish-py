@@ -77,3 +77,13 @@ class Query(object):
                 for other in others:
                     yield resultSelector(item, other)
 
+    def groupjoin(self, other, keySelector, otherKeySelector, resultSelector):
+        otherKeys = dict()
+        for item in other:
+            otherKeys.setdefault(otherKeySelector(item), []).append(item)
+
+        for item in self._source:
+            key = keySelector(item)
+            others = otherKeys.get(key, [])
+            yield resultSelector(item, others)
+
