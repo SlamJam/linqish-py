@@ -4,6 +4,9 @@ import unittest
 def _pair(first, second):
     return (first, second)
 
+def _mod2(x):
+    return x % 2
+
 class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
@@ -138,11 +141,9 @@ class TestCase(unittest.TestCase):
             list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, _pair)))
 
     def test_join_preserves_order(self):
-        def mod2(x):
-            return x % 2
-        self.assertSequenceEqual(
+       self.assertSequenceEqual(
             [(1,1),(1,3),(2,2),(3,1),(3,3)],
-            list(Query([1,2,3]).join([1,2,3], mod2, mod2, _pair)))
+            list(Query([1,2,3]).join([1,2,3], _mod2, _mod2, _pair)))
 
     def test_join_nones_are_discarded(self):
         def is_even_or_none(x):
@@ -173,3 +174,8 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [(1,[]), (2,[2]), (3,[3])],
             list(Query([1,2,3]).groupjoin([1,2,3], key, key, _pair)))
+
+    def test_groupjoin_preserves_order(self):
+        self.assertSequenceEqual(
+            [(1,[1,3]), (2,[2]), (3,[1,3])],
+            list(Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair)))
