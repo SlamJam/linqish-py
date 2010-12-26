@@ -155,3 +155,12 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [(1,[1]), (2,[2,2]), (3,[])],
             list(Query([1,2,3]).groupjoin([1,2,2], lambda x:x, lambda y:y, _pair)))
+
+    def test_groupjoin_keeps_self_key_nones(self):
+        def self_key(x):
+            if x == 1:
+                return None
+            return x
+        self.assertSequenceEqual(
+            [(1, []), (2,[2]), (3,[3])],
+            list(Query([1,2,3]).groupjoin([1,2,3], self_key, lambda y:y, _pair)))
