@@ -68,7 +68,9 @@ class Query(object):
     def join(self, other, keySelector, otherKeySelector, resultSelector):
         otherKeys = dict()
         for item in other:
-            otherKeys.setdefault(otherKeySelector(item), []).append(item)
+            key = otherKeySelector(item)
+            if key is not None:
+                otherKeys.setdefault(otherKeySelector(item), []).append(item)
 
         for item in self._source:
             key = keySelector(item)
@@ -80,7 +82,9 @@ class Query(object):
     def groupjoin(self, other, keySelector, otherKeySelector, resultSelector):
         otherKeys = dict()
         for item in other:
-            otherKeys.setdefault(otherKeySelector(item), []).append(item)
+            key = otherKeySelector(item)
+            if key is not None:
+                otherKeys.setdefault(key, []).append(item)
 
         for item in self._source:
             key = keySelector(item)
