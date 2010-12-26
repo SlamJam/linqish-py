@@ -129,3 +129,7 @@ class TestCase(unittest.TestCase):
             TypeError, 'None, the value of predicate, is not a function',
             lambda: Query([1,2,3]).skipwhile(None))
 
+    def test_join(self):
+        self.assertSequenceEqual(
+            [(1,1),(2,2),(3,3)],
+            list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, lambda x,y: (x,y))))
