@@ -179,3 +179,6 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [(1,[1,3]), (2,[2]), (3,[1,3])],
             list(Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair)))
+
+    def test_concat(self):
+        self.assertSequenceEqual([1, 2, 3], list(Query([1]).concat([2,3])))

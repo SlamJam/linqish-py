@@ -91,3 +91,5 @@ class Query(object):
             others = otherKeys.get(key, [])
             yield resultSelector(item, others)
 
+    def concat(self, other):
+        return itertools.chain(self._source, other)
