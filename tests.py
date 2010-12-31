@@ -188,6 +188,7 @@ class TestCase(unittest.TestCase):
 
     def test_thenby(self):
         self.assertSequenceEqual([0, -1, 1], list(Query([-1, 0, 1]).thenby(lambda x: x **2)))
+        
     def test_thenby_after_orderby(self):
         self.assertSequenceEqual(
             [(1,1),(1,2),(2,1)],
