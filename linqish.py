@@ -121,5 +121,10 @@ class ReverseKey(object):
         self._key = key
        
     def __cmp__(self, other):
-        return other._key.__cmp__(self._key)
+        if self._key < other._key:
+            return 1
+        elif self._key > other._key:
+            return -1
+        else:
+            return 0
 
