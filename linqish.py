@@ -19,7 +19,7 @@ class Query(object):
         else:
             raise ValueError('{!r}, the value of {}, has wrong number of args'.format(func, name))
 
-    def __init__(self, source, _sort_keys=[]):
+    def __init__(self, source, _sort_keys=()):
         if not isinstance(source, collections.Iterable):
             raise TypeError('{!r}, value of source, is not an Iterable'.format(source))
         self._source = iter(source)
@@ -108,10 +108,10 @@ class Query(object):
         return Query(itertools.chain(self._source, other))
 
     def orderby(self, keySelector):
-        return Query(self, _sort_keys=[keySelector])
+        return Query(self, _sort_keys=(keySelector,))
 
     def thenby(self, keySelector):
-        return Query(self, _sort_keys=(self._sort_keys + [keySelector]))
+        return Query(self, _sort_keys=(self._sort_keys + (keySelector,)))
 
     def orderbydesc(self, keySelector):
         return self.orderby(lambda x: ReverseKey(keySelector(x)))
