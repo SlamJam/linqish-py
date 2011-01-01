@@ -116,6 +116,9 @@ class Query(object):
     def orderbydesc(self, keySelector):
         return self.orderby(lambda x: ReverseKey(keySelector(x)))
 
+    def thenbydesc(self, keySelector):
+        return self.thenby(lambda x: ReverseKey(keySelector(x)))
+
 class ReverseKey(object):
     def __init__(self, key):
         self._key = key

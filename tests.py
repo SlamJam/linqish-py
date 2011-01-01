@@ -200,3 +200,11 @@ class TestCase(unittest.TestCase):
     def test_orderbydesc_with_strings(self):
         self.assertSequenceEqual(['z', 'y', 'x'], list(Query(['x', 'y', 'z']).orderbydesc(lambda x: x)))
 
+    def test_thenbydesc(self):
+        self.assertSequenceEqual([-1, 1, 0], list(Query([-1, 0, 1]).thenbydesc(lambda x: x**2)))
+
+    def test_thenbydesc_after_orderby(self):
+        self.assertSequenceEqual(
+            [(1,2),(1,1),(2,1)],
+            list(Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenbydesc(lambda x: x[1])))
+
