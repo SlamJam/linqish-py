@@ -108,13 +108,14 @@ class Query(object):
         return Query(itertools.chain(self._source, other))
 
     def orderby(self, keySelector):
-        return Query(self, _sort_keys=(keySelector,))
-
-    def thenby(self, keySelector):
-        return Query(self, _sort_keys=(self._sort_keys + (keySelector,)))
+        return OrderedQuery(self, _sort_keys=(keySelector,))
 
     def orderbydesc(self, keySelector):
         return self.orderby(lambda x: ReverseKey(keySelector(x)))
+
+class OrderedQuery(Query):
+    def thenby(self, keySelector):
+        return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
 
     def thenbydesc(self, keySelector):
         return self.thenby(lambda x: ReverseKey(keySelector(x)))
