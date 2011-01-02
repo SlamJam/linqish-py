@@ -202,3 +202,7 @@ class TestCase(unittest.TestCase):
             [(1,2),(1,1),(2,1)],
             list(Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenbydesc(lambda x: x[1])))
 
+    def test_reverse(self):
+        self.assertSequenceEqual(
+            [3,2,1],
+            list(Query([1,2,3]).reverse()))

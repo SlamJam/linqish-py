@@ -113,6 +113,9 @@ class Query(object):
     def orderbydesc(self, keySelector):
         return self.orderby(lambda x: ReverseKey(keySelector(x)))
 
+    def reverse(self):
+        return Query(reversed(list(self._source)))
+
 class OrderedQuery(Query):
     def thenby(self, keySelector):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
