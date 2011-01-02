@@ -2,7 +2,7 @@ from linqish import Query
 import unittest
 
 def _pair(first, second):
-    return (first, second)
+    return first, second
 
 def _mod2(x):
     return x % 2
