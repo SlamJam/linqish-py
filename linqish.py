@@ -111,7 +111,7 @@ class Query(object):
         return OrderedQuery(self, _sort_keys=(keySelector,))
 
     def orderbydesc(self, keySelector):
-        return self.orderby(lambda x: ReverseKey(keySelector(x)))
+        return self.orderby(lambda x: _ReverseKey(keySelector(x)))
 
     def reverse(self):
         return Query(reversed(list(self._source)))
@@ -121,9 +121,9 @@ class OrderedQuery(Query):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
 
     def thenbydesc(self, keySelector):
-        return self.thenby(lambda x: ReverseKey(keySelector(x)))
+        return self.thenby(lambda x: _ReverseKey(keySelector(x)))
 
-class ReverseKey(object):
+class _ReverseKey(object):
     def __init__(self, key):
         self._key = key
        
@@ -135,7 +135,7 @@ class ReverseKey(object):
         else:
             return 0
 
-class Grouping(object):
+class _Grouping(object):
     def __init__(self, key, elements):
         self._key = key
         self._elements = elements
