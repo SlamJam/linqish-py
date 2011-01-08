@@ -230,8 +230,16 @@ class TestCase(unittest.TestCase):
     def test_except(self):
         self.assertSequenceEqual(
             [-2, 0],
-            list(Query([-2,-2,-1,0]).except_([1,1], abs))
-        )
+            list(Query([-2,-2,-1,0]).except_([1,1], abs)))
 
     def test_tolist(self):
         self.assertEqual([1,2,3], Query([1,2,3]).tolist())
+
+    def test_todict(self):
+        self.assertEqual({1:'A',2:'AB',3:'ABC'}, Query(['a','ab','abc']).todict(len,str.upper))
+
+    def test_todict_when_keySelector_produces_duplicate(self):
+        self.assertRaisesRegexp(
+                TypeError, 'keySelector produced duplicate key.',
+                lambda: Query([1,1]).todict(lambda x:x))
+

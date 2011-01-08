@@ -227,6 +227,15 @@ class Query(object):
     def tolist(self):
         return list(self._source)
 
+    def todict(self, keySelector, element=lambda x: x):
+        result = dict()
+        for item in self._source:
+            item_key = keySelector(item)
+            if item_key in result:
+                raise TypeError('keySelector produced duplicate key.')
+            result[item_key] = element(item)
+        return result
+
 class OrderedQuery(Query):
     def thenby(self, keySelector):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
