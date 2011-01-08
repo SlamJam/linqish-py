@@ -211,3 +211,24 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [(3, ['ONE', 'TWO']), (5, ['THREE']), (4, ['FOUR', 'FIVE'])],
             list(Query(['one', 'two', 'three', 'four', 'five']).groupby(len, str.upper, lambda k,e: (k, list(e)))))
+
+    def test_distinct(self):
+        self.assertSequenceEqual(
+            [-1,0,2],
+            list(Query([-1,0,1,2]).distinct(abs)))
+
+    def test_union(self):
+        self.assertSequenceEqual(
+            [-3,-1,-2,0],
+            list(Query([-3,-1,1,3]).union([-2,0,2],abs)))
+
+    def test_intersection(self):
+        self.assertSequenceEqual(
+            [2, 1, 0],
+            list(Query([-3,-2,-2,-1,0]).intersection([0,1,2,2,4], abs)))
+
+    def test_except(self):
+        self.assertSequenceEqual(
+            [-2, 0],
+            list(Query([-2,-2,-1,0]).except_([1,1], abs))
+        )

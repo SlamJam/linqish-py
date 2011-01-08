@@ -169,6 +169,62 @@ class Query(object):
             lookup._add(keySelector(item), elementSelector(item))
         return Query(itertools.imap(lambda x: resultSelector(x.key, x._elements), lookup))
 
+    def distinct(self, key=lambda x: x):
+        return Query(self._distinct(key))
+
+    def _distinct(self, key):
+        keys = set()
+        for item in self._source:
+            item_key = key(item)
+            if item_key not in keys:
+                keys.add(item_key)
+                yield item
+
+    def union(self, other, key=lambda x: x):
+        return Query(self._union(other, key))
+
+    def _union(self, other, key):
+        keys = set()
+        for item in self._source:
+            item_key = key(item)
+            if item_key not in keys:
+                keys.add(item_key)
+                yield item
+
+        for item in other:
+            item_key = key(item)
+            if item_key not in keys:
+                keys.add(item_key)
+                yield item
+
+    def intersection(self, other, key=lambda x: x):
+        return Query(self._intersection(other, key))
+
+    def _intersection(self, other, key):
+        other_dict = dict()
+        for item in other:
+            other_dict.setdefault(key(item), item)
+        for item in self._source:
+            try:
+                yield other_dict.pop(key(item))
+            except KeyError:
+                pass
+
+    def except_(self, other, key=lambda x: x):
+        return Query(self._except_(other, key))
+
+    def _except_(self, other, key):
+        yielded_keys = set()
+        for item in other:
+            yielded_keys.add(key(item))
+
+        for item in self._source:
+            item_key = key(item)
+            if item_key not in yielded_keys:
+                yield item
+                yielded_keys.add(item_key)
+
+
 class OrderedQuery(Query):
     def thenby(self, keySelector):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
