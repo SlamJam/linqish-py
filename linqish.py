@@ -224,6 +224,8 @@ class Query(object):
                 yield item
                 yielded_keys.add(item_key)
 
+    def tolist(self):
+        return list(self._source)
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):

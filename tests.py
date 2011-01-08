@@ -232,3 +232,6 @@ class TestCase(unittest.TestCase):
             [-2, 0],
             list(Query([-2,-2,-1,0]).except_([1,1], abs))
         )
+
+    def test_tolist(self):
+        self.assertEqual([1,2,3], Query([1,2,3]).tolist())
