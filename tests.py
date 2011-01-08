@@ -243,3 +243,18 @@ class TestCase(unittest.TestCase):
                 TypeError, 'keySelector produced duplicate key.',
                 lambda: Query([1,1]).todict(lambda x:x))
 
+    def test_tolookup_getitem(self):
+        result = Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x)
+        self.assertSequenceEqual([-4,4], list(result[2]))
+        self.assertSequenceEqual([-2,2], list(result[1]))
+        self.assertSequenceEqual([0], list(result[0]))
+
+    def test_tolookup_iter(self):
+        result = iter(Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x))
+        grouping = next(result)
+        self.assertEqual(2, grouping.key)
+        grouping = next(result)
+        self.assertEqual(1, grouping.key)
+        grouping = next(result)
+        self.assertEqual(0, grouping.key)
+

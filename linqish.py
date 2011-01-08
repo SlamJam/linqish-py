@@ -164,9 +164,7 @@ class Query(object):
         return Query(reversed(list(self._source)))
 
     def groupby(self, keySelector, elementSelector=lambda x: x, resultSelector=_Grouping):
-        lookup = Lookup()
-        for item in self._source:
-            lookup._add(keySelector(item), elementSelector(item))
+        lookup = self.tolookup(keySelector, elementSelector)
         return Query(itertools.imap(lambda x: resultSelector(x.key, x._elements), lookup))
 
     def distinct(self, key=lambda x: x):
@@ -227,14 +225,21 @@ class Query(object):
     def tolist(self):
         return list(self._source)
 
-    def todict(self, keySelector, element=lambda x: x):
+    def todict(self, keySelector, elementSelector=lambda x: x):
         result = dict()
         for item in self._source:
             item_key = keySelector(item)
             if item_key in result:
                 raise TypeError('keySelector produced duplicate key.')
-            result[item_key] = element(item)
+            result[item_key] = elementSelector(item)
         return result
+
+    def tolookup(self, keySelector, elementSelector=lambda x:x):
+        result = Lookup()
+        for item in self._source:
+            result._add(keySelector(item), elementSelector(item))
+        return result
+
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
