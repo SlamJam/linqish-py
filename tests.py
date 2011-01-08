@@ -206,3 +206,8 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual(
             [3,2,1],
             list(Query([1,2,3]).reverse()))
+
+    def test_groupby(self):
+        self.assertSequenceEqual(
+            [(3, ['ONE', 'TWO']), (5, ['THREE']), (4, ['FOUR', 'FIVE'])],
+            list(Query(['one', 'two', 'three', 'four', 'five']).groupby(len, str.upper, lambda k,e: (k, list(e)))))

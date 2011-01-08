@@ -3,6 +3,53 @@ import inspect
 import itertools
 import operator
 
+class _ReverseKey(object):
+    def __init__(self, key):
+        self._key = key
+
+    def __cmp__(self, other):
+        if self._key < other._key:
+            return 1
+        elif self._key > other._key:
+            return -1
+        else:
+            return 0
+
+class _Grouping(object):
+    def __init__(self, key, elements):
+        self._key = key
+        self._elements = elements
+
+    @property
+    def key(self):
+        return self._key
+
+    def __iter__(self):
+        return iter(self._elements)
+
+class Lookup(object):
+    def __init__(self):
+        self._map = collections.defaultdict(list)
+        self._keys = []
+
+    def _add(self, key, element):
+        elements = self._map[key]
+        if not elements:
+            self._keys.append(key)
+        elements.append(element)
+
+    def __len__(self):
+        return len(self._map)
+
+    def __getitem__(self, item):
+        return iter(self._map[item])
+
+    def __contains__(self, item):
+        return item in self._map
+
+    def __iter__(self):
+        return itertools.imap(lambda x: _Grouping(x, self._map[x]), self._keys)
+
 class Query(object):
     def _get_number_of_args(self, func):
         return len(inspect.getargspec(func)[0])
@@ -116,6 +163,12 @@ class Query(object):
     def reverse(self):
         return Query(reversed(list(self._source)))
 
+    def groupby(self, keySelector, elementSelector=lambda x: x, resultSelector=_Grouping):
+        lookup = Lookup()
+        for item in self._source:
+            lookup._add(keySelector(item), elementSelector(item))
+        return Query(itertools.imap(lambda x: resultSelector(x.key, x._elements), lookup))
+
 class OrderedQuery(Query):
     def thenby(self, keySelector):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
@@ -123,26 +176,4 @@ class OrderedQuery(Query):
     def thenbydesc(self, keySelector):
         return self.thenby(lambda x: _ReverseKey(keySelector(x)))
 
-class _ReverseKey(object):
-    def __init__(self, key):
-        self._key = key
-       
-    def __cmp__(self, other):
-        if self._key < other._key:
-            return 1
-        elif self._key > other._key:
-            return -1
-        else:
-            return 0
 
-class _Grouping(object):
-    def __init__(self, key, elements):
-        self._key = key
-        self._elements = elements
-
-    @property
-    def key(self):
-        return self._key
-
-    def __iter__(self):
-        return iter(self._elements)
