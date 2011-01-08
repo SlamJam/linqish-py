@@ -135,3 +135,14 @@ class ReverseKey(object):
         else:
             return 0
 
+class Grouping(object):
+    def __init__(self, key, elements):
+        self._key = key
+        self._elements = elements
+
+    @property
+    def key(self):
+        return self._key
+
+    def __iter__(self):
+        return iter(self._elements)
