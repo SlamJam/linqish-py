@@ -10,7 +10,8 @@ def _mod2(x):
 class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, value of source, is not an Iterable',
+            TypeError,
+            'None, value of source, must be iterable by not an iterator or a callable returning an iterator.',
             lambda: Query(None))
 
     def test_where(self):
@@ -182,6 +183,7 @@ class TestCase(unittest.TestCase):
 
     def test_concat(self):
         self.assertSequenceEqual([1, 2, 3], list(Query([1]).concat([2,3])))
+
 
     def test_orderby(self):
         self.assertSequenceEqual([0, -1, 1], list(Query([-1, 0, 1]).orderby(lambda x: x**2)))
