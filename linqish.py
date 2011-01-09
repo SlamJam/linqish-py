@@ -52,6 +52,20 @@ class Lookup(object):
         return itertools.imap(lambda x: _Grouping(x, self._map[x]), self._keys)
 
 class Query(object):
+    def __init__(self, source, _sort_keys=()):
+        if not (self._is_iterable_by_not_iterator(source) or callable(source)):
+            raise TypeError(('{!r}, value of source, must be iterable by not an iterator or a callable returning ' +
+                            'an iterator.').format(source))
+        self._source = source
+        self._sort_keys = _sort_keys
+
+    def __iter__(self):
+        result = self._itersource()
+        if self._sort_keys:
+            #TODO: is it necessary to call iter(...)?
+            result = iter(sorted(result, key=lambda x: list(map(lambda y: y(x), self._sort_keys))))
+        return result
+
     def _get_number_of_args(self, func):
         return len(inspect.getargspec(func)[0])
 
@@ -70,19 +84,9 @@ class Query(object):
     def _is_iterable_by_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
 
-    def __init__(self, source, _sort_keys=()):
-        if not (self._is_iterable_by_not_iterator(source) or callable(source)):
-            raise TypeError(('{!r}, value of source, must be iterable by not an iterator or a callable returning ' +
-                            'an iterator.').format(source))
-        self._source = source
-        self._sort_keys = _sort_keys
+    def _itersource(self):
+        return callable(self._source) and self._source() or iter(self._source)
 
-    def __iter__(self):
-        result = callable(self._source) and self._source() or iter(self._source)
-        if self._sort_keys:
-            #TODO: is it necessary to call iter(...)?
-            result = iter(sorted(result, key=lambda x: list(map(lambda y: y(x), self._sort_keys))))
-        return result
 
     def where(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
