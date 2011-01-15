@@ -310,5 +310,24 @@ class TestCase(unittest.TestCase):
     def test_last_with_default(self):
         self.assertEqual('?', Query('').last(default='?'))
 
+    def test_single(self):
+        self.assertEqual('a', Query('a').single())
+
+    def test_single_not_found(self):
+        self.assertRaisesRegexp(LookupError,
+            'No items found.',
+            lambda: Query('').single())
+
+    def test_single_too_many_found(self):
+        self.assertRaisesRegexp(LookupError,
+            'More than one item found.',
+            lambda: Query('ab').single())
+
+    def test_single_with_predicate(self):
+        self.assertEqual('b', Query('abc').single(lambda x: 'a' < x <'c'))
+
+    def test_single_with_default(self):
+        self.assertEqual('?', Query('').single(default='?'))
+
 
         

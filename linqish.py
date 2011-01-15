@@ -260,14 +260,16 @@ class Query(object):
             lambda x: x[0] is not _missing and x[1] is not _missing and key(x[0]) == key(x[1]),
             itertools.izip_longest(self._itersource(), other, fillvalue=_missing)))
 
+    def _default_value(self, default, error_message=''):
+        if default is _missing:
+            raise LookupError(error_message)
+        return default
+
     def first(self, predicate=lambda x:True, default=_missing):
         try:
             result = next(itertools.ifilter(predicate, self._itersource()))
         except StopIteration:
-            if default is _missing:
-                raise LookupError()
-            else:
-                return default
+            return self._default_value(default)
         return result
 
     def last(self, predicate=lambda x:True, default=_missing):
@@ -275,13 +277,23 @@ class Query(object):
         for item in itertools.ifilter(predicate, self._itersource()):
             last = item
         if last is _missing:
-            if default is _missing:
-                raise LookupError()
-            else:
-                return default
+            return self._default_value(default)
         return last
 
+    def single(self, predicate=lambda x:True, default=_missing):
+        iter_ = itertools.ifilter(predicate, self._itersource())
+        try:
+            result = next(iter_)
+        except StopIteration:
+            return self._default_value(default, 'No items found.')
+        
+        try:
+            next(iter_)
+            raise LookupError('More than one item found.')
+        except StopIteration:
+            pass
 
+        return result
 
 
 class OrderedQuery(Query):
