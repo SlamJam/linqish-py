@@ -353,6 +353,13 @@ class TestCase(unittest.TestCase):
     def test_at_index_greater_than_number_of_elements_and_default(self):
         self.assertEqual('?', Query('').at(10,'?'))
 
+    def test_at_is_optimized_for_sized_sources(self):
+        class SizedSource(object):
+            def __len__(self):
+                return 0
+            def __iter__(self):
+                raise unittest.TestCase.failureException()
 
+        self.assertRaises(ValueError, lambda: Query(SizedSource()).at(10))
 
         

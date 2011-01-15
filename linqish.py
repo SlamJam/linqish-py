@@ -298,6 +298,9 @@ class Query(object):
 
         return result
 
+    def _at_overrange_error(self, index):
+        return ValueError('{!r}, the value of index, is greater than the number of elements.'.format(index))
+        
     def at(self, index, default=_missing):
         if type(index) is not int:
             raise TypeError('{!r}, the value of index, is not an int.'.format(index))
@@ -307,12 +310,17 @@ class Query(object):
                 return default
             raise ValueError('{!r}, the value of index, is negative.'.format(index))
 
+        if isinstance(self._source, collections.Sized) and index > len(self._source):
+            if default is not _missing:
+                return default
+            raise self._at_overrange_error(index)
+
         try:
             return next(itertools.islice(self._itersource(), index, None))
         except StopIteration:
             if default is not _missing:
                 return default
-            raise ValueError('{!r}, the value of index, is greater than the number of elements.'.format(index))
+            raise self._at_overrange_error(index)
         
 
 class OrderedQuery(Query):
