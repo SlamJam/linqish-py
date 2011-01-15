@@ -260,3 +260,18 @@ class TestCase(unittest.TestCase):
         grouping = next(result)
         self.assertEqual(0, grouping.key)
 
+    def test_iter_equal_other_none(self):
+        self.assertRaisesRegexp(TypeError,
+            'The value of other is None.',
+            lambda: Query([]).iter_equal(None))
+
+    def test_iter_equal_sequences_equal(self):
+        self.assertTrue(Query([1,2]).iter_equal([1,2]))
+
+    def test_iter_equal_sequences_not_equal(self):
+        self.assertFalse(Query([1,2]).iter_equal([1,2,3]))
+
+    def test_iter_equal_with_empty_sequences(self):
+        self.assertTrue(Query([]).iter_equal([]))
+
+        

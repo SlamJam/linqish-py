@@ -250,6 +250,13 @@ class Query(object):
             result._add(keySelector(item), elementSelector(item))
         return result
 
+    def iter_equal(self, other, key=lambda x:x):
+        if other is None:
+            raise TypeError('The value of other is None.')
+        missing = object()
+        return all(itertools.imap(
+            lambda x: key(x[0]) == key(x[1]),
+            itertools.izip_longest(self._itersource(), other, fillvalue=missing)))
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
