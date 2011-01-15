@@ -129,14 +129,30 @@ class Query(object):
         return Query(lambda: itertools.imap(selector, *iterables))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
-        selector = self._normalize_func(selector)
+        if not inspect.isfunction(selector):
+            raise self._not_func_error('selector', selector)
+
         if not inspect.isfunction(resultSelector):
             raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
             raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
-        return Query(lambda: itertools.chain.from_iterable(itertools.imap(
-            lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
-            enumerate(self._source))))
+
+        first, second = itertools.tee(self._itersource())
+        num_args = self._get_number_of_args(selector)
+        iterables = None
+        if num_args == 1:
+            iterables = [second]
+        elif num_args == 2:
+            iterables = [itertools.count(), second]
+        else:
+            raise self._wrong_number_of_args_error('selector', selector)
+
+        def apply_result_selector(item, collection):
+            return itertools.imap(functools.partial(resultSelector, item), collection)
+
+        return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
+            apply_result_selector,
+            itertools.izip(first, itertools.imap(selector, *iterables)))))
 
     def take(self, count):
         if count < 0:
