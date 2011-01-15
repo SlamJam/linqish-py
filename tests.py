@@ -329,5 +329,30 @@ class TestCase(unittest.TestCase):
     def test_single_with_default(self):
         self.assertEqual('?', Query('').single(default='?'))
 
+    def test_at(self):
+        self.assertEqual('b', Query('abc').at(1))
+
+    def test_at_index_not_int(self):
+        self.assertRaisesRegexp(TypeError,
+            "'foo', the value of index, is not an int.",
+            lambda: Query('').at('foo'))
+
+    def test_at_negative_index_and_no_default(self):
+        self.assertRaisesRegexp(ValueError,
+            '-1, the value of index, is negative.',
+            lambda: Query('').at(-1))
+
+    def test_at_negative_index_and_default(self):
+        self.assertEqual('?', Query('').at(-1,'?'))
+
+    def test_at_index_greater_than_number_of_elements_and_no_default(self):
+        self.assertRaisesRegexp(ValueError,
+            '10, the value of index, is greater than the number of elements.',
+            lambda: Query('').at(10))
+
+    def test_at_index_greater_than_number_of_elements_and_default(self):
+        self.assertEqual('?', Query('').at(10,'?'))
+
+
 
         

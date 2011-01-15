@@ -260,16 +260,14 @@ class Query(object):
             lambda x: x[0] is not _missing and x[1] is not _missing and key(x[0]) == key(x[1]),
             itertools.izip_longest(self._itersource(), other, fillvalue=_missing)))
 
-    def _default_value(self, default, error_message=''):
-        if default is _missing:
-            raise LookupError(error_message)
-        return default
-
     def first(self, predicate=lambda x:True, default=_missing):
         try:
             result = next(itertools.ifilter(predicate, self._itersource()))
         except StopIteration:
-            return self._default_value(default)
+            if default is _missing:
+                raise LookupError()
+            return default
+
         return result
 
     def last(self, predicate=lambda x:True, default=_missing):
@@ -277,7 +275,10 @@ class Query(object):
         for item in itertools.ifilter(predicate, self._itersource()):
             last = item
         if last is _missing:
-            return self._default_value(default)
+            if default is _missing:
+                raise LookupError()
+            return default
+
         return last
 
     def single(self, predicate=lambda x:True, default=_missing):
@@ -285,8 +286,10 @@ class Query(object):
         try:
             result = next(iter_)
         except StopIteration:
-            return self._default_value(default, 'No items found.')
-        
+            if default is _missing:
+                raise LookupError('No items found.')
+            return default
+
         try:
             next(iter_)
             raise LookupError('More than one item found.')
@@ -295,6 +298,22 @@ class Query(object):
 
         return result
 
+    def at(self, index, default=_missing):
+        if type(index) is not int:
+            raise TypeError('{!r}, the value of index, is not an int.'.format(index))
+
+        if index < 0:
+            if default is not _missing:
+                return default
+            raise ValueError('{!r}, the value of index, is negative.'.format(index))
+
+        try:
+            return next(itertools.islice(self._itersource(), index, None))
+        except StopIteration:
+            if default is not _missing:
+                return default
+            raise ValueError('{!r}, the value of index, is greater than the number of elements.'.format(index))
+        
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
