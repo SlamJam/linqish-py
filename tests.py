@@ -1,4 +1,5 @@
 from linqish import Query
+import collections
 import unittest
 
 def _pair(first, second):
@@ -354,12 +355,23 @@ class TestCase(unittest.TestCase):
         self.assertEqual('?', Query('').at(10,'?'))
 
     def test_at_is_optimized_for_sized_sources(self):
-        class SizedSource(object):
+        class SizedSource(collections.Sized):
             def __len__(self):
                 return 0
             def __iter__(self):
                 raise unittest.TestCase.failureException()
 
         self.assertRaises(ValueError, lambda: Query(SizedSource()).at(10))
+
+    def test_at_is_optimized_for_sequence_sources(self):
+        class SequenceSource(collections.Sequence):
+            def __len__(self):
+                return 5
+            def __getitem__(self, item):
+                return 'x'
+            def __iter__(self):
+                raise unittest.TestCase.failureException()
+
+        self.assertEqual('x', Query(SequenceSource()).at(3))
 
         

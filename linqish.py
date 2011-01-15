@@ -90,7 +90,6 @@ class Query(object):
     def _itersource(self):
         return callable(self._source) and self._source() or iter(self._source)
 
-
     def where(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
         first, second = itertools.tee(self._source)
@@ -314,6 +313,9 @@ class Query(object):
             if default is not _missing:
                 return default
             raise self._at_overrange_error(index)
+
+        if isinstance(self._source, collections.Sequence):
+            return self._source[index]
 
         try:
             return next(itertools.islice(self._itersource(), index, None))
