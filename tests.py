@@ -287,7 +287,7 @@ class TestCase(unittest.TestCase):
         self.assertFalse(Query([1]).iter_equal([], key))
 
     def test_first(self):
-        self.assertEqual('t', Query('test').first())
+        self.assertEqual('a', Query('abc').first())
 
     def test_first_empty(self):
         self.assertRaises(LookupError, lambda: Query('').first())
@@ -296,7 +296,19 @@ class TestCase(unittest.TestCase):
         self.assertEqual('d', Query('abcd').first(lambda x: x > 'c'))
 
     def test_first_with_default(self):
-        self.assertEqual('_', Query('').first(default='_'))
+        self.assertEqual('?', Query('').first(default='?'))
+
+    def test_last(self):
+        self.assertEqual('c', Query('abc').last())
+
+    def test_last_empty(self):
+        self.assertRaises(LookupError, lambda: Query('').last())
+
+    def test_last_with_predicate(self):
+        self.assertEqual('a', Query('abdc').last(lambda x: x < 'b'))
+
+    def test_last_with_default(self):
+        self.assertEqual('?', Query('').last(default='?'))
 
 
         

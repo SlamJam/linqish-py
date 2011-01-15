@@ -270,6 +270,20 @@ class Query(object):
                 return default
         return result
 
+    def last(self, predicate=lambda x:True, default=_missing):
+        last = _missing
+        for item in itertools.ifilter(predicate, self._itersource()):
+            last = item
+        if last is _missing:
+            if default is _missing:
+                raise LookupError()
+            else:
+                return default
+        return last
+
+
+
+
 class OrderedQuery(Query):
     def thenby(self, keySelector):
         return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
