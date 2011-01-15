@@ -90,16 +90,28 @@ class Query(object):
     def _itersource(self):
         return callable(self._source) and self._source() or iter(self._source)
 
-    def where(self, predicate):
-        predicate = self._normalize_func(predicate, 'predicate')
-        first, second = itertools.tee(self._source)
-        return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
-
     def _not_func_error(self, name, value):
         return TypeError('{!r}, the value of {}, is not a function'.format(value, name))
 
     def _wrong_number_of_args_error(self, name, value):
         return ValueError('{!r}, the value of {}, has wrong number of args'.format(value, name))
+
+    def where(self, predicate):
+        if not inspect.isfunction(predicate):
+            raise self._not_func_error('predicate', predicate)
+
+        first, second = itertools.tee(self._itersource())
+
+        num_args = self._get_number_of_args(predicate)
+        iterables = None
+        if num_args == 1:
+            iterables = [second]
+        elif num_args == 2:
+            iterables = [itertools.count(), second]
+        else:
+            raise self._wrong_number_of_args_error('predicate', predicate)
+
+        return Query(lambda: itertools.compress(first, itertools.imap(predicate, *iterables)))
 
     def select(self, selector):
         if not inspect.isfunction(selector):
