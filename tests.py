@@ -269,9 +269,34 @@ class TestCase(unittest.TestCase):
         self.assertTrue(Query([1,2]).iter_equal([1,2]))
 
     def test_iter_equal_sequences_not_equal(self):
-        self.assertFalse(Query([1,2]).iter_equal([1,2,3]))
+        self.assertFalse(Query([1,2]).iter_equal([1,3]))
 
     def test_iter_equal_with_empty_sequences(self):
         self.assertTrue(Query([]).iter_equal([]))
+
+    def test_iter_equal_with_key(self):
+        key = lambda x: True
+        self.assertTrue(Query([1,2]).iter_equal([3,4], key))
+
+    def test_iter_equal_with_self_shorter(self):
+        key = lambda x: True
+        self.assertFalse(Query([]).iter_equal([1], key))
+
+    def test_iter_equal_with_other_shorter(self):
+        key = lambda x: True
+        self.assertFalse(Query([1]).iter_equal([], key))
+
+    def test_first(self):
+        self.assertEqual('t', Query('test').first())
+
+    def test_first_empty(self):
+        self.assertRaises(LookupError, lambda: Query('').first())
+
+    def test_first_with_predicate(self):
+        self.assertEqual('d', Query('abcd').first(lambda x: x > 'c'))
+
+    def test_first_with_default(self):
+        self.assertEqual('_', Query('').first(default='_'))
+
 
         

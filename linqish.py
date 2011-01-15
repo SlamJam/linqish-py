@@ -4,6 +4,9 @@ import inspect
 import itertools
 import operator
 
+# used to indicate missing values
+_missing = object()
+
 class _ReverseKey(object):
     def __init__(self, key):
         self._key = key
@@ -253,10 +256,19 @@ class Query(object):
     def iter_equal(self, other, key=lambda x:x):
         if other is None:
             raise TypeError('The value of other is None.')
-        missing = object()
         return all(itertools.imap(
-            lambda x: key(x[0]) == key(x[1]),
-            itertools.izip_longest(self._itersource(), other, fillvalue=missing)))
+            lambda x: x[0] is not _missing and x[1] is not _missing and key(x[0]) == key(x[1]),
+            itertools.izip_longest(self._itersource(), other, fillvalue=_missing)))
+
+    def first(self, predicate=lambda x:True, default=_missing):
+        try:
+            result = next(itertools.ifilter(predicate, self._itersource()))
+        except StopIteration:
+            if default is _missing:
+                raise LookupError()
+            else:
+                return default
+        return result
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
