@@ -96,19 +96,20 @@ class Query(object):
     def _wrong_number_of_args_error(self, name, value):
         return ValueError('{!r}, the value of {}, has wrong number of args'.format(value, name))
 
+    def _get_iterables(self, func, source):
+        num_args = self._get_number_of_args(func)
+        if num_args == 1:
+            return [source]
+        elif num_args == 2:
+            return [itertools.count(), source]
+    
     def where(self, predicate):
         if not inspect.isfunction(predicate):
             raise self._not_func_error('predicate', predicate)
 
         first, second = itertools.tee(self._itersource())
-
-        num_args = self._get_number_of_args(predicate)
-        iterables = None
-        if num_args == 1:
-            iterables = [second]
-        elif num_args == 2:
-            iterables = [itertools.count(), second]
-        else:
+        iterables = self._get_iterables(predicate, second)
+        if not iterables:
             raise self._wrong_number_of_args_error('predicate', predicate)
 
         return Query(lambda: itertools.compress(first, itertools.imap(predicate, *iterables)))
@@ -117,13 +118,8 @@ class Query(object):
         if not inspect.isfunction(selector):
             raise self._not_func_error('selector', selector)
 
-        num_args = self._get_number_of_args(selector)
-        iterables = None
-        if num_args == 1:
-            iterables = [self._itersource()]
-        elif num_args == 2:
-            iterables = [itertools.count(), self._itersource()]
-        else:
+        iterables = self._get_iterables(selector, self._itersource())
+        if not iterables:
             raise self._wrong_number_of_args_error('selector', selector)
 
         return Query(lambda: itertools.imap(selector, *iterables))
@@ -138,13 +134,8 @@ class Query(object):
             raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
 
         first, second = itertools.tee(self._itersource())
-        num_args = self._get_number_of_args(selector)
-        iterables = None
-        if num_args == 1:
-            iterables = [second]
-        elif num_args == 2:
-            iterables = [itertools.count(), second]
-        else:
+        iterables = self._get_iterables(selector, second)
+        if not iterables:
             raise self._wrong_number_of_args_error('selector', selector)
 
         def apply_result_selector(item, collection):
