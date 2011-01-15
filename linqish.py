@@ -95,9 +95,26 @@ class Query(object):
         first, second = itertools.tee(self._source)
         return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
+    def _not_func_error(self, name, value):
+        return TypeError('{!r}, the value of {}, is not a function'.format(value, name))
+
+    def _wrong_number_of_args_error(self, name, value):
+        return ValueError('{!r}, the value of {}, has wrong number of args'.format(value, name))
+
     def select(self, selector):
-        selector = self._normalize_func(selector)
-        return Query(lambda: itertools.starmap(selector, enumerate(self._source)))
+        if not inspect.isfunction(selector):
+            raise self._not_func_error('selector', selector)
+
+        num_args = self._get_number_of_args(selector)
+        iterables = None
+        if num_args == 1:
+            iterables = [self._itersource()]
+        elif num_args == 2:
+            iterables = [itertools.count(), self._itersource()]
+        else:
+            raise self._wrong_number_of_args_error('selector', selector)
+
+        return Query(lambda: itertools.imap(selector, *iterables))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
