@@ -95,26 +95,9 @@ class Query(object):
         first, second = itertools.tee(self._source)
         return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
-    def _not_func_error(self, name, value):
-        return TypeError('{!r}, the value of {}, is not a function'.format(value, name))
-
-    def _wrong_number_of_args_error(self, name, value):
-        return ValueError('{!r}, the value of {}, has wrong number of args'.format(value, name))
-
     def select(self, selector):
-        if not inspect.isfunction(selector):
-            raise self._not_func_error('selector', selector)
-
-        num_args = self._get_number_of_args(selector)
-        iterables = None
-        if num_args == 1:
-            iterables = [self._itersource()]
-        elif num_args == 2:
-            iterables = [itertools.count(), self._itersource()]
-        else:
-            raise self._wrong_number_of_args_error('selector', selector)
-
-        return Query(lambda: itertools.imap(selector, *iterables))
+        selector = self._normalize_func(selector)
+        return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
@@ -122,9 +105,14 @@ class Query(object):
             raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
             raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
-        return Query(lambda: itertools.chain.from_iterable(itertools.imap(
-            lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
-            enumerate(self._source))))
+
+        def apply_result_selector(item, collection):
+            return itertools.imap(functools.partial(resultSelector, item), collection)
+
+        first, second = itertools.tee(self._itersource())
+        return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
+            apply_result_selector,
+            itertools.izip(first, itertools.starmap(selector, enumerate(second))))))
 
     def take(self, count):
         if count < 0:
