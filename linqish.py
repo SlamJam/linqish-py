@@ -335,7 +335,7 @@ class Query(object):
             next(iter_)
             return Query(self._source)
         except StopIteration:
-            return [default]
+            return Query([default])
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
