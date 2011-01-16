@@ -90,60 +90,41 @@ class Query(object):
     def _itersource(self):
         return callable(self._source) and self._source() or iter(self._source)
 
+    def where(self, predicate):
+        predicate = self._normalize_func(predicate, 'predicate')
+        first, second = itertools.tee(self._source)
+        return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
+
     def _not_func_error(self, name, value):
         return TypeError('{!r}, the value of {}, is not a function'.format(value, name))
 
     def _wrong_number_of_args_error(self, name, value):
         return ValueError('{!r}, the value of {}, has wrong number of args'.format(value, name))
 
-    def _get_iterables(self, func, source):
-        num_args = self._get_number_of_args(func)
-        if num_args == 1:
-            return [source]
-        elif num_args == 2:
-            return [itertools.count(), source]
-    
-    def where(self, predicate):
-        if not inspect.isfunction(predicate):
-            raise self._not_func_error('predicate', predicate)
-
-        first, second = itertools.tee(self._itersource())
-        iterables = self._get_iterables(predicate, second)
-        if not iterables:
-            raise self._wrong_number_of_args_error('predicate', predicate)
-
-        return Query(lambda: itertools.compress(first, itertools.imap(predicate, *iterables)))
-
     def select(self, selector):
         if not inspect.isfunction(selector):
             raise self._not_func_error('selector', selector)
 
-        iterables = self._get_iterables(selector, self._itersource())
-        if not iterables:
+        num_args = self._get_number_of_args(selector)
+        iterables = None
+        if num_args == 1:
+            iterables = [self._itersource()]
+        elif num_args == 2:
+            iterables = [itertools.count(), self._itersource()]
+        else:
             raise self._wrong_number_of_args_error('selector', selector)
 
         return Query(lambda: itertools.imap(selector, *iterables))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
-        if not inspect.isfunction(selector):
-            raise self._not_func_error('selector', selector)
-
+        selector = self._normalize_func(selector)
         if not inspect.isfunction(resultSelector):
             raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
             raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
-
-        first, second = itertools.tee(self._itersource())
-        iterables = self._get_iterables(selector, second)
-        if not iterables:
-            raise self._wrong_number_of_args_error('selector', selector)
-
-        def apply_result_selector(item, collection):
-            return itertools.imap(functools.partial(resultSelector, item), collection)
-
-        return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
-            apply_result_selector,
-            itertools.izip(first, itertools.imap(selector, *iterables)))))
+        return Query(lambda: itertools.chain.from_iterable(itertools.imap(
+            lambda x: itertools.imap(lambda y: resultSelector(x[1], y), selector(x[0], x[1])),
+            enumerate(self._source))))
 
     def take(self, count):
         if count < 0:
