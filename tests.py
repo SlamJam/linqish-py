@@ -374,4 +374,9 @@ class TestCase(unittest.TestCase):
 
         self.assertEqual('x', Query(SequenceSource()).at(3))
 
-        
+    def test_ifempty_source_not_empty(self):
+        self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).ifempty(None)))
+
+    def test_ifempty_source_empty(self):
+        default = object()
+        self.assertSequenceEqual([default], list(Query([]).ifempty(default)))

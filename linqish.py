@@ -328,7 +328,14 @@ class Query(object):
             if default is not _missing:
                 return default
             raise self._at_overrange_error(index)
-        
+
+    def ifempty(self, default):
+        iter_ = self._itersource()
+        try:
+            next(iter_)
+            return Query(self._source)
+        except StopIteration:
+            return [default]
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
