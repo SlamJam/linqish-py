@@ -380,3 +380,9 @@ class TestCase(unittest.TestCase):
     def test_ifempty_source_empty(self):
         default = object()
         self.assertSequenceEqual([default], list(Query([]).ifempty(default)))
+
+    def test_ifempty_uses_deferred_execution(self):
+        source = []
+        result = Query(source).ifempty(None)
+        source.extend([1,2,3])
+        self.assertSequenceEqual([1,2,3], list(result))

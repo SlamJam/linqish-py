@@ -330,12 +330,15 @@ class Query(object):
             raise self._at_overrange_error(index)
 
     def ifempty(self, default):
+        return Query(lambda: self._ifempty(default))
+
+    def _ifempty(self, default):
         iter_ = self._itersource()
         try:
             next(iter_)
-            return Query(self._source)
+            return self._itersource()
         except StopIteration:
-            return Query([default])
+            return iter([default])
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
