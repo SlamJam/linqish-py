@@ -11,13 +11,23 @@ class _ReverseKey(object):
     def __init__(self, key):
         self._key = key
 
-    def __cmp__(self, other):
-        if self._key < other._key:
-            return 1
-        elif self._key > other._key:
-            return -1
-        else:
-            return 0
+    def __eq__(self, other):
+        return self._key == other._key
+
+    def __lt__(self, other):
+        return self._key > other._key
+
+    def __gt__(self, other):
+        return self._key < other._key
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __le__(self, other):
+        return self.__lt__(other) or self.__eq__(other)
+
+    def __ge__(self, other):
+        return self.__gt__(other) or self.__eq__(other)
 
 class _Grouping(object):
     def __init__(self, key, elements):
@@ -67,11 +77,21 @@ class Query(object):
         except OverflowError:
             raise ValueError(('{!r} and {!r}, the values of start and count respectively, ' +
                               'result in overflow.').format(start, count))
+    
+    @staticmethod
+    def repeat(element, count):
+        if count < 0:
+            raise ValueError('{!r}, the value of count, is negative.'.format(count))
+        return Query(lambda: itertools.repeat(element, count))
+
+    @staticmethod
+    def empty():
+        return _empty
 
     def __init__(self, source, _sort_keys=()):
-        if not (self._is_iterable_by_not_iterator(source) or callable(source)):
-            raise TypeError(('{!r}, value of source, must be iterable by not an iterator or a callable returning ' +
-                            'an iterator.').format(source))
+        if not (self._is_iterable_but_not_iterator(source) or callable(source)):
+            raise TypeError(('{!r}, value of source, must be iterable but not an iterator or a callable returning ' +
+                             'an iterator.').format(source))
         self._source = source
         self._sort_keys = _sort_keys
 
@@ -87,7 +107,7 @@ class Query(object):
 
     def _normalize_func(self, func, name='selector'):
         if not inspect.isfunction(func):
-            raise TypeError('{!r}, the value of {}, is not a function'.format(func, name))
+            raise TypeError('{!r}, the value of {}, is not a function.'.format(func, name))
 
         number_of_args = self._get_number_of_args(func)
         if number_of_args == 1:
@@ -95,9 +115,9 @@ class Query(object):
         if number_of_args == 2:
             return func
         else:
-            raise ValueError('{!r}, the value of {}, has wrong number of args'.format(func, name))
+            raise ValueError('{!r}, the value of {}, has wrong number of args.'.format(func, name))
 
-    def _is_iterable_by_not_iterator(self, instance):
+    def _is_iterable_but_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
 
     def _itersource(self):
@@ -115,9 +135,9 @@ class Query(object):
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
         if not inspect.isfunction(resultSelector):
-            raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
+            raise TypeError('{!r}, the value of resultSelector, is not a function.'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
-            raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
+            raise ValueError('{!r}, the value of resultSelector, has wrong number of args.'.format(resultSelector))
 
         def apply_result_selector(item, collection):
             return itertools.imap(functools.partial(resultSelector, item), collection)
@@ -352,6 +372,8 @@ class Query(object):
             return self._itersource()
         except StopIteration:
             return iter([default])
+
+_empty = Query([])
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):
