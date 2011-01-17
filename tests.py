@@ -198,6 +198,9 @@ class TestCase(unittest.TestCase):
     def test_orderby(self):
         self.assertSequenceEqual([0, -1, 1], list(Query([-1, 0, 1]).orderby(lambda x: x**2)))
 
+    def test_orderby_with_none_items(self):
+        self.assertSequenceEqual([None,1,2,3], list(Query([3,2,1,None]).orderby(lambda x: x)))
+
     def test_thenby_after_orderby(self):
         self.assertSequenceEqual(
             [(1,1),(1,2),(2,1)],
