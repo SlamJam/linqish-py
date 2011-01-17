@@ -47,9 +47,9 @@ class TestCase(unittest.TestCase):
         self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
 
     def test_select_with_index(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(0,'a'),(1,'b'),(2,'c')],
-            list(Query(['a', 'b', 'c']).select(lambda i,x: (i,x))))
+            Query(['a', 'b', 'c']).select(lambda i,x: (i,x)))
 
     def test_select_selector_raises(self):
         def raiser(x):
@@ -85,9 +85,9 @@ class TestCase(unittest.TestCase):
             lambda: Query([]).selectmany(lambda: None))
 
     def test_selectmany_with_result_selector(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [((1,2), 1), ((1,2), 2), ((3,4), 3), ((3,4), 4)],
-            list(Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer))))
+            Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer)))
 
     def test_selectmany_result_selector_not_a_function(self):
         self.assertRaisesRegexp(
@@ -112,16 +112,16 @@ class TestCase(unittest.TestCase):
         self.assertIterEqual([2, 3], Query([1,2,3]).skip(1))
 
     def test_skip_count_negative(self):
-        self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).skip(-1)))
+        self.assertIterEqual([1,2,3], Query([1,2,3]).skip(-1))
 
     def test_skip_count_larger_than_length(self):
-        self.assertSequenceEqual([], list(Query([1,2,3]).skip(10)))
+        self.assertIterEqual([], Query([1,2,3]).skip(10))
 
     def test_takewhile(self):
-        self.assertSequenceEqual([1,2], list(Query([1,2,3]).takewhile(lambda x: x < 3)))
+        self.assertIterEqual([1,2], Query([1,2,3]).takewhile(lambda x: x < 3))
 
     def test_takewhile_with_index(self):
-        self.assertSequenceEqual([1,2], list(Query([1,2,3]).takewhile(lambda i,x: i == 0 or x == 2)))
+        self.assertIterEqual([1,2], Query([1,2,3]).takewhile(lambda i,x: i == 0 or x == 2))
 
     def test_takewhile_predicate_not_function(self):
         self.assertRaisesRegexp(
@@ -129,10 +129,10 @@ class TestCase(unittest.TestCase):
             lambda: Query([1,2,3]).takewhile(None))
 
     def test_skipwhile(self):
-        self.assertSequenceEqual([3], list(Query([1,2,3]).skipwhile(lambda x: x < 3)))
+        self.assertIterEqual([3], Query([1,2,3]).skipwhile(lambda x: x < 3))
 
     def test_skipwhile_with_index(self):
-        self.assertSequenceEqual([3], list(Query([1,2,3]).skipwhile(lambda i,x: i == 0 or x == 2)))
+        self.assertIterEqual([3], Query([1,2,3]).skipwhile(lambda i,x: i == 0 or x == 2))
 
     def test_skipwhile_predicate_not_function(self):
         self.assertRaisesRegexp(
@@ -140,105 +140,95 @@ class TestCase(unittest.TestCase):
             lambda: Query([1,2,3]).skipwhile(None))
 
     def test_join(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,1),(2,2),(3,3)],
-            list(Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, _pair)))
+            Query([1,2,3]).join([1,2,3],lambda x: x, lambda y: y, _pair))
 
     def test_join_preserves_order(self):
-       self.assertSequenceEqual(
+       self.assertIterEqual(
             [(1,1),(1,3),(2,2),(3,1),(3,3)],
-            list(Query([1,2,3]).join([1,2,3], _mod2, _mod2, _pair)))
+            Query([1,2,3]).join([1,2,3], _mod2, _mod2, _pair))
 
     def test_join_nones_are_discarded(self):
         def is_even_or_none(x):
             return (x + 1) % 2 or None
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(2,2)],
-            list(Query([1,2,3]).join([1,2,3], is_even_or_none, is_even_or_none, _pair)))
+            Query([1,2,3]).join([1,2,3], is_even_or_none, is_even_or_none, _pair))
 
     def test_groupjoin(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,[1]), (2,[2,2]), (3,[])],
-            list(Query([1,2,3]).groupjoin([1,2,2], lambda x:x, lambda y:y, _pair)))
+            Query([1,2,3]).groupjoin([1,2,2], lambda x:x, lambda y:y, _pair))
 
     def test_groupjoin_keeps_self_key_nones(self):
         def self_key(x):
             if x == 1:
                 return None
             return x
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1, []), (2,[2]), (3,[3])],
-            list(Query([1,2,3]).groupjoin([1,2,3], self_key, lambda y:y, _pair)))
+            Query([1,2,3]).groupjoin([1,2,3], self_key, lambda y:y, _pair))
 
     def test_groupjoin_drops_other_key_nones(self):
         def key(x):
             if x == 1:
                 return None
             return x
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,[]), (2,[2]), (3,[3])],
-            list(Query([1,2,3]).groupjoin([1,2,3], key, key, _pair)))
+            Query([1,2,3]).groupjoin([1,2,3], key, key, _pair))
 
     def test_groupjoin_preserves_order(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,[1,3]), (2,[2]), (3,[1,3])],
-            list(Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair)))
+            Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair))
 
     def test_concat(self):
-        self.assertSequenceEqual([1, 2, 3], list(Query([1]).concat([2,3])))
+        self.assertIterEqual([1, 2, 3], Query([1]).concat([2,3]))
 
 
     def test_orderby(self):
-        self.assertSequenceEqual([0, -1, 1], list(Query([-1, 0, 1]).orderby(lambda x: x**2)))
+        self.assertIterEqual([0, -1, 1], Query([-1, 0, 1]).orderby(lambda x: x**2))
 
     def test_orderby_with_none_items(self):
-        self.assertSequenceEqual([None,1,2,3], list(Query([3,2,1,None]).orderby(lambda x: x)))
+        self.assertIterEqual([None,1,2,3], Query([3,2,1,None]).orderby(lambda x: x))
 
     def test_thenby_after_orderby(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,1),(1,2),(2,1)],
-            list(Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenby(lambda x: x[1])))
+            Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenby(lambda x: x[1]))
 
     def test_orderbydesc_with_ints(self):
-        self.assertSequenceEqual([-1, 1, 0], list(Query([-1, 0, 1]).orderbydesc(lambda x: x**2)))
+        self.assertIterEqual([-1, 1, 0], Query([-1, 0, 1]).orderbydesc(lambda x: x**2))
 
     def test_orderbydesc_with_strings(self):
-        self.assertSequenceEqual(['z', 'y', 'x'], list(Query(['x', 'y', 'z']).orderbydesc(lambda x: x)))
+        self.assertIterEqual(['z', 'y', 'x'], Query(['x', 'y', 'z']).orderbydesc(lambda x: x))
 
     def test_thenbydesc_after_orderby(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(1,2),(1,1),(2,1)],
-            list(Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenbydesc(lambda x: x[1])))
+            Query([(2,1),(1,2),(1,1)]).orderby(lambda x: x[0]).thenbydesc(lambda x: x[1]))
 
     def test_reverse(self):
-        self.assertSequenceEqual(
-            [3,2,1],
-            list(Query([1,2,3]).reverse()))
+        self.assertIterEqual([3,2,1], Query([1,2,3]).reverse())
 
     def test_groupby(self):
-        self.assertSequenceEqual(
+        self.assertIterEqual(
             [(3, ['ONE', 'TWO']), (5, ['THREE']), (4, ['FOUR', 'FIVE'])],
-            list(Query(['one', 'two', 'three', 'four', 'five']).groupby(len, str.upper, lambda k,e: (k, list(e)))))
+            Query(['one', 'two', 'three', 'four', 'five']).groupby(len, str.upper, lambda k,e: (k, list(e))))
 
     def test_distinct(self):
-        self.assertSequenceEqual(
-            [-1,0,2],
-            list(Query([-1,0,1,2]).distinct(abs)))
+        self.assertIterEqual([-1,0,2], Query([-1,0,1,2]).distinct(abs))
 
     def test_union(self):
-        self.assertSequenceEqual(
-            [-3,-1,-2,0],
-            list(Query([-3,-1,1,3]).union([-2,0,2],abs)))
+        self.assertIterEqual([-3,-1,-2,0], Query([-3,-1,1,3]).union([-2,0,2],abs))
 
     def test_intersection(self):
-        self.assertSequenceEqual(
-            [2, 1, 0],
-            list(Query([-3,-2,-2,-1,0]).intersection([0,1,2,2,4], abs)))
+        self.assertIterEqual([2, 1, 0], Query([-3,-2,-2,-1,0]).intersection([0,1,2,2,4], abs))
 
     def test_except(self):
-        self.assertSequenceEqual(
-            [-2, 0],
-            list(Query([-2,-2,-1,0]).except_([1,1], abs)))
+        self.assertIterEqual([-2, 0], Query([-2,-2,-1,0]).except_([1,1], abs))
 
     def test_tolist(self):
         self.assertEqual([1,2,3], Query([1,2,3]).tolist())
@@ -253,9 +243,9 @@ class TestCase(unittest.TestCase):
 
     def test_tolookup_getitem(self):
         result = Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x)
-        self.assertSequenceEqual([-4,4], list(result[2]))
-        self.assertSequenceEqual([-2,2], list(result[1]))
-        self.assertSequenceEqual([0], list(result[0]))
+        self.assertIterEqual([-4,4], result[2])
+        self.assertIterEqual([-2,2], result[1])
+        self.assertIterEqual([0], result[0])
 
     def test_tolookup_iter(self):
         result = iter(Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x))
@@ -380,20 +370,20 @@ class TestCase(unittest.TestCase):
         self.assertEqual('x', Query(SequenceSource()).at(3))
 
     def test_ifempty_source_not_empty(self):
-        self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).ifempty(None)))
+        self.assertIterEqual([1,2,3], Query([1,2,3]).ifempty(None))
 
     def test_ifempty_source_empty(self):
         default = object()
-        self.assertSequenceEqual([default], list(Query([]).ifempty(default)))
+        self.assertIterEqual([default], Query([]).ifempty(default))
 
     def test_ifempty_uses_deferred_execution(self):
         source = []
         result = Query(source).ifempty(None)
         source.extend([1,2,3])
-        self.assertSequenceEqual([1,2,3], list(result))
+        self.assertIterEqual([1,2,3], result)
 
     def test_range(self):
-        self.assertSequenceEqual([1,2,3], list(Query.range(1,3)))
+        self.assertIterEqual([1,2,3], Query.range(1,3))
 
     def test_range_starts_at_start(self):
         start = 1000
@@ -421,10 +411,10 @@ class TestCase(unittest.TestCase):
             lambda: Query.range(sys.maxint, 1))
 
     def test_repeat(self):
-        self.assertSequenceEqual(['x','x','x'], list(Query([]).repeat('x', 3)))
+        self.assertIterEqual(['x','x','x'], Query([]).repeat('x', 3))
 
     def test_repeat_with_zero_count(self):
-        self.assertSequenceEqual([], list(Query.repeat('x', 0)))
+        self.assertIterEqual([], Query.repeat('x', 0))
 
     def test_repeat_with_negative_count(self):
         self.assertRaisesRegexp(
@@ -432,7 +422,7 @@ class TestCase(unittest.TestCase):
             lambda: Query.repeat('x', -1))
 
     def test_empty(self):
-        self.assertSequenceEqual([], list(Query.empty()))
+        self.assertIterEqual([], Query.empty())
 
     def test_empty_value_is_cached(self):
         self.assertTrue(Query.empty() is Query.empty())
