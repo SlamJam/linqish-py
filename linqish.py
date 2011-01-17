@@ -63,9 +63,9 @@ class Query(object):
         return Query(lambda: itertools.repeat(element, count))
 
     def __init__(self, source, _sort_keys=()):
-        if not (self._is_iterable_by_not_iterator(source) or callable(source)):
-            raise TypeError(('{!r}, value of source, must be iterable by not an iterator or a callable returning ' +
-                            'an iterator.').format(source))
+        if not (self._is_iterable_but_not_iterator(source) or callable(source)):
+            raise TypeError(('{!r}, value of source, must be iterable but not an iterator or a callable returning ' +
+                             'an iterator.').format(source))
         self._source = source
         self._sort_keys = _sort_keys
 
@@ -91,7 +91,7 @@ class Query(object):
         else:
             raise ValueError('{!r}, the value of {}, has wrong number of args'.format(func, name))
 
-    def _is_iterable_by_not_iterator(self, instance):
+    def _is_iterable_but_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
 
     def _itersource(self):

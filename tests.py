@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
             TypeError,
-            'None, value of source, must be iterable by not an iterator or a callable returning an iterator.',
+            'None, value of source, must be iterable but not an iterator or a callable returning an iterator.',
             lambda: Query(None))
 
     def test_where(self):
