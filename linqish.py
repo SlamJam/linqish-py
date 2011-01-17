@@ -65,7 +65,6 @@ class Lookup(object):
         return itertools.imap(lambda x: _Grouping(x, self._map[x]), self._keys)
 
 class Query(object):
-
     @staticmethod
     def repeat(element, count):
         if count < 0:
@@ -74,7 +73,7 @@ class Query(object):
 
     @staticmethod
     def empty():
-        return Query([])
+        return _empty
 
     def __init__(self, source, _sort_keys=()):
         if not (self._is_iterable_but_not_iterator(source) or callable(source)):
@@ -360,6 +359,8 @@ class Query(object):
             return self._itersource()
         except StopIteration:
             return iter([default])
+
+_empty = Query([])
 
 class OrderedQuery(Query):
     def thenby(self, keySelector):

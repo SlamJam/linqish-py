@@ -400,3 +400,6 @@ class TestCase(unittest.TestCase):
 
     def test_empty(self):
         self.assertSequenceEqual([], list(Query.empty()))
+
+    def test_empty_value_is_cached(self):
+        self.assertTrue(Query.empty() is Query.empty())
