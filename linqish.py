@@ -291,8 +291,8 @@ class Query(object):
         return result
 
     def iter_equal(self, other, key=lambda x:x):
-        if other is None:
-            raise TypeError('The value of other is None.')
+        if not isinstance(other, collections.Iterable):
+            raise TypeError('{!r}, the value of other, is not iterable.'.format(other))
         return all(itertools.imap(
             lambda x: x[0] is not _missing and x[1] is not _missing and key(x[0]) == key(x[1]),
             itertools.izip_longest(self._itersource(), other, fillvalue=_missing)))
