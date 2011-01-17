@@ -1,12 +1,21 @@
 from linqish import Query
 import collections
 import unittest
+import sys
 
 def _pair(first, second):
     return first, second
 
 def _mod2(x):
     return x % 2
+
+def _consume(query):
+    try:
+        iter_ = iter(query)
+        while True:
+            next(iter_)
+    except StopIteration:
+        pass
 
 class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
@@ -386,3 +395,31 @@ class TestCase(unittest.TestCase):
         result = Query(source).ifempty(None)
         source.extend([1,2,3])
         self.assertSequenceEqual([1,2,3], list(result))
+
+    def test_range(self):
+        self.assertSequenceEqual([1,2,3], list(Query.range(1,3)))
+
+    def test_range_starts_at_start(self):
+        start = 1000
+        self.assertEqual(start, list(Query.range(start, 10))[0])
+
+    def test_range_has_count_items(self):
+        count = 10
+        self.assertEqual(count, len(list(Query.range(0, count))))
+
+    def test_range_returns_query(self):
+        self.assertIsInstance(Query.range(0, 10), Query)
+
+    def test_range_negative_count_raises_error(self):
+        self.assertRaisesRegexp(ValueError,
+            '-1, the value of count, is negative\.',
+            lambda: Query.range(0, -1))
+
+    def test_range_no_overflow_at_limit(self):
+        #No exception
+        _consume(Query.range(sys.maxint - 1, 1))
+
+    def test_range_overflow(self):
+        self.assertRaisesRegexp(ValueError,
+            '[0-9]+ and 1, the values of start and count respectively, result in overflow\.',
+            lambda: Query.range(sys.maxint, 1))
