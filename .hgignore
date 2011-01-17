@@ -2,6 +2,6 @@ syntax:glob
 *~
 *.bak
 *.orig
-*.swp
 *.pyc
+*.swp
 .idea
