@@ -72,6 +72,10 @@ class Query(object):
             raise ValueError('{!r}, the value of count, is negative.'.format(count))
         return Query(lambda: itertools.repeat(element, count))
 
+    @staticmethod
+    def empty():
+        return Query([])
+
     def __init__(self, source, _sort_keys=()):
         if not (self._is_iterable_but_not_iterator(source) or callable(source)):
             raise TypeError(('{!r}, value of source, must be iterable but not an iterator or a callable returning ' +

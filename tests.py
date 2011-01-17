@@ -397,3 +397,6 @@ class TestCase(unittest.TestCase):
         self.assertRaisesRegexp(
             ValueError, '-1, the value of count, is negative\.',
             lambda: Query.repeat('x', -1))
+
+    def test_empty(self):
+        self.assertSequenceEqual([], list(Query.empty()))
