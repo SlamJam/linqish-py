@@ -461,7 +461,7 @@ class TestCase(unittest.TestCase):
 
     def test_any_only_iterates_until_predicate_is_true(self):
         def predicate(x):
-            if (x > 3):
+            if x > 3:
                 raise unittest.TestCase.failureException()
             return x == 3
         self.assertTrue(Query([1,2,3,4]).any(predicate))
