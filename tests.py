@@ -18,6 +18,9 @@ def _consume(query):
         pass
 
 class TestCase(unittest.TestCase):
+    def assertIterEqual(self, iter1, iter2):
+        self.assertSequenceEqual(list(iter1), list(iter2))
+
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
             TypeError,
@@ -25,14 +28,10 @@ class TestCase(unittest.TestCase):
             lambda: Query(None))
 
     def test_where(self):
-        self.assertSequenceEqual(
-            [2, 3],
-            list(Query([1, 2, 3]).where(lambda x: x > 1)))
+        self.assertIterEqual([2, 3], Query([1, 2, 3]).where(lambda x: x > 1))
 
     def test_where_with_index(self):
-        self.assertSequenceEqual(
-            ['b', 'c'],
-            list(Query(['a', 'b', 'c']).where(lambda i,x: i > 0)))
+        self.assertIterEqual(['b', 'c'], Query(['a', 'b', 'c']).where(lambda i,x: i > 0))
 
     def test_where_predicate_not_function(self):
         self.assertRaisesRegexp(
@@ -45,9 +44,7 @@ class TestCase(unittest.TestCase):
             lambda: Query([]).where((lambda: None)))
 
     def test_select(self):
-        self.assertSequenceEqual(
-            [1, 2, 3],
-            list(Query([1, 2, 3]).select(lambda x: x)))
+        self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
 
     def test_select_with_index(self):
         self.assertSequenceEqual(
@@ -72,14 +69,10 @@ class TestCase(unittest.TestCase):
             lambda: Query([]).select((lambda: None)))
 
     def test_selectmany(self):
-        self.assertSequenceEqual(
-            [1,2,3,4],
-            list(Query([(1,2), (3,4)]).selectmany(lambda x: x)))
+        self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
 
     def test_selectmany_with_index(self):
-        self.assertSequenceEqual(
-            [1, 2, 3, 4, 3, 4],
-            list(Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x)))
+        self.assertIterEqual([1, 2, 3, 4, 3, 4], Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x))
 
     def test_selectmany_selector_not_a_function(self):
         self.assertRaisesRegexp(
@@ -107,16 +100,16 @@ class TestCase(unittest.TestCase):
             lambda: Query([]).selectmany(lambda x: x, lambda: None))
 
     def test_take(self):
-        self.assertSequenceEqual([1,2], list(Query([1,2,3]).take(2)))
+        self.assertIterEqual([1,2], Query([1,2,3]).take(2))
 
     def test_take_count_negative(self):
-        self.assertSequenceEqual([], list(Query([1,2,3]).take(-1)))
+        self.assertIterEqual([], Query([1,2,3]).take(-1))
 
     def test_take_count_larger_than_length(self):
-        self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).take(10)))
+        self.assertIterEqual([1,2,3], Query([1,2,3]).take(10))
 
     def test_skip(self):
-        self.assertSequenceEqual([2, 3], list(Query([1,2,3]).skip(1)))
+        self.assertIterEqual([2, 3], Query([1,2,3]).skip(1))
 
     def test_skip_count_negative(self):
         self.assertSequenceEqual([1,2,3], list(Query([1,2,3]).skip(-1)))
