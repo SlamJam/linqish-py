@@ -440,3 +440,30 @@ class TestCase(unittest.TestCase):
 
     def test_empty_value_is_cached(self):
         self.assertTrue(Query.empty() is Query.empty())
+
+    def test_any_empty_source(self):
+        self.assertFalse(Query([]).any(lambda x: True))
+
+    def test_any_empty_source_and_default_predicate(self):
+        self.assertFalse(Query([]).any())
+
+    def test_any_nonempty_source_and_default_predicate(self):
+        self.assertTrue(Query([1,2,3]).any())
+
+    def test_any_source_with_only_falsy_items_and_default_predicate(self):
+        self.assertTrue(Query([False,None,0,[]]).any())
+
+    def test_any_nonempty_source_and_predicate_always_false(self):
+        self.assertFalse(Query([1,2,3]).any(lambda x: False))
+
+    def test_any_nonempty_source_and_predicate_true_once(self):
+        self.assertTrue(Query([1,2,3]).any(lambda x: x == 3))
+
+    def test_any_only_iterates_until_predicate_is_true(self):
+        def predicate(x):
+            if (x > 3):
+                raise unittest.TestCase.failureException()
+            return x == 3
+        self.assertTrue(Query([1,2,3,4]).any(predicate))
+
+

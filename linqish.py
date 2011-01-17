@@ -373,6 +373,9 @@ class Query(object):
         except StopIteration:
             return iter([default])
 
+    def any(self, predicate=lambda x: True):
+        return any(itertools.imap(predicate, self._itersource()))
+
 _empty = Query([])
 
 class OrderedQuery(Query):
