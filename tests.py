@@ -386,3 +386,14 @@ class TestCase(unittest.TestCase):
         result = Query(source).ifempty(None)
         source.extend([1,2,3])
         self.assertSequenceEqual([1,2,3], list(result))
+
+    def test_repeat(self):
+        self.assertSequenceEqual(['x','x','x'], list(Query([]).repeat('x', 3)))
+
+    def test_repeat_with_zero_count(self):
+        self.assertSequenceEqual([], list(Query.repeat('x', 0)))
+
+    def test_repeat_with_negative_count(self):
+        self.assertRaisesRegexp(ValueError,
+            '-1, the value of count, is negative\.',
+            lambda: Query.repeat('x', -1))

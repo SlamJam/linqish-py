@@ -55,6 +55,13 @@ class Lookup(object):
         return itertools.imap(lambda x: _Grouping(x, self._map[x]), self._keys)
 
 class Query(object):
+
+    @staticmethod
+    def repeat(element, count):
+        if count < 0:
+            raise ValueError('{!r}, the value of count, is negative.'.format(count))
+        return Query(lambda: itertools.repeat(element, count))
+
     def __init__(self, source, _sort_keys=()):
         if not (self._is_iterable_by_not_iterator(source) or callable(source)):
             raise TypeError(('{!r}, value of source, must be iterable by not an iterator or a callable returning ' +
