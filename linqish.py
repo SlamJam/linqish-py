@@ -376,6 +376,9 @@ class Query(object):
     def any(self, predicate=lambda x: True):
         return any(itertools.imap(predicate, self._itersource()))
 
+    def all(self, predicate):
+        return all(itertools.imap(predicate, self._itersource()))
+
 _empty = Query([])
 
 class OrderedQuery(Query):

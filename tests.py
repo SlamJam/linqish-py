@@ -466,4 +466,20 @@ class TestCase(unittest.TestCase):
             return x == 3
         self.assertTrue(Query([1,2,3,4]).any(predicate))
 
+    def test_all_empty_source(self):
+        self.assertTrue(Query([]).all(lambda x: False))
+
+    def test_all_nonempty_source_and_predicate_always_true(self):
+        self.assertTrue(Query([1,2,3]).all(lambda x: True))
+
+    def test_all_nonempty_source_and_predicate_false_once(self):
+        self.assertFalse(Query([1,2,3]).all(lambda x: x == 3))
+
+    def test_all_only_iterates_until_predicate_is_false(self):
+        def predicate(x):
+            if (x > 3):
+                raise unittest.TestCase.failureException()
+            return x != 3
+        self.assertFalse(Query([1,2,3,4]).all(predicate))
+
 
