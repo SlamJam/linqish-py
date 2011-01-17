@@ -12,7 +12,7 @@ class TestCase(unittest.TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
             TypeError,
-            'None, value of source, must be iterable but not an iterator or a callable returning an iterator.',
+            'None, value of source, must be iterable but not an iterator or a callable returning an iterator\.',
             lambda: Query(None))
 
     def test_where(self):
@@ -27,12 +27,12 @@ class TestCase(unittest.TestCase):
 
     def test_where_predicate_not_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of predicate, is not a function',
+            TypeError, 'None, the value of predicate, is not a function\.',
             lambda: Query([]).where(None))
 
     def test_where_predicate_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at .*>, the value of predicate, has wrong number of args',
+            ValueError, '<function <lambda> at [^>]*>, the value of predicate, has wrong number of args\.',
             lambda: Query([]).where((lambda: None)))
 
     def test_select(self):
@@ -54,12 +54,12 @@ class TestCase(unittest.TestCase):
 
     def test_select_selector_not_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of selector, is not a function',
+            TypeError, 'None, the value of selector, is not a function\.',
             lambda: Query([]).select(None))
 
     def test_select_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, '.*',
+            ValueError, '<function <lambda> at [^>]*>, the value of selector, has wrong number of args\.',
             lambda: Query([]).select((lambda: None)))
 
     def test_selectmany(self):
@@ -74,12 +74,12 @@ class TestCase(unittest.TestCase):
 
     def test_selectmany_selector_not_a_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of selector, is not a function',
+            TypeError, 'None, the value of selector, is not a function\.',
             lambda: Query([]).select(None))
 
     def test_selectmany_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at .*>, the value of selector, has wrong number of args',
+            ValueError, '<function <lambda> at [^>]*>, the value of selector, has wrong number of args\.',
             lambda: Query([]).selectmany(lambda: None))
 
     def test_selectmany_with_result_selector(self):
@@ -89,12 +89,12 @@ class TestCase(unittest.TestCase):
 
     def test_selectmany_result_selector_not_a_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of resultSelector, is not a function',
+            TypeError, 'None, the value of resultSelector, is not a function\.',
             lambda: Query([]).selectmany(lambda x: x, None))
 
     def test_selectmany_result_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at .*>, the value of resultSelector, has wrong number of args',
+            ValueError, '<function <lambda> at [^>]*>, the value of resultSelector, has wrong number of args\.',
             lambda: Query([]).selectmany(lambda x: x, lambda: None))
 
     def test_take(self):
@@ -123,7 +123,7 @@ class TestCase(unittest.TestCase):
 
     def test_takewhile_predicate_not_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of predicate, is not a function',
+            TypeError, 'None, the value of predicate, is not a function\.',
             lambda: Query([1,2,3]).takewhile(None))
 
     def test_skipwhile(self):
@@ -134,7 +134,7 @@ class TestCase(unittest.TestCase):
 
     def test_skipwhile_predicate_not_function(self):
         self.assertRaisesRegexp(
-            TypeError, 'None, the value of predicate, is not a function',
+            TypeError, 'None, the value of predicate, is not a function\.',
             lambda: Query([1,2,3]).skipwhile(None))
 
     def test_join(self):
@@ -243,8 +243,8 @@ class TestCase(unittest.TestCase):
 
     def test_todict_when_keySelector_produces_duplicate(self):
         self.assertRaisesRegexp(
-                TypeError, 'keySelector produced duplicate key.',
-                lambda: Query([1,1]).todict(lambda x:x))
+            TypeError, 'keySelector produced duplicate key\.',
+            lambda: Query([1,1]).todict(lambda x:x))
 
     def test_tolookup_getitem(self):
         result = Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x)
@@ -262,8 +262,8 @@ class TestCase(unittest.TestCase):
         self.assertEqual(0, grouping.key)
 
     def test_iter_equal_other_none(self):
-        self.assertRaisesRegexp(TypeError,
-            'The value of other is None.',
+        self.assertRaisesRegexp(
+            TypeError, 'The value of other is None\.',
             lambda: Query([]).iter_equal(None))
 
     def test_iter_equal_sequences_equal(self):
@@ -315,13 +315,13 @@ class TestCase(unittest.TestCase):
         self.assertEqual('a', Query('a').single())
 
     def test_single_not_found(self):
-        self.assertRaisesRegexp(LookupError,
-            'No items found.',
+        self.assertRaisesRegexp(
+            LookupError, 'No items found.',
             lambda: Query('').single())
 
     def test_single_too_many_found(self):
-        self.assertRaisesRegexp(LookupError,
-            'More than one item found.',
+        self.assertRaisesRegexp(
+            LookupError, 'More than one item found\.',
             lambda: Query('ab').single())
 
     def test_single_with_predicate(self):
@@ -334,21 +334,21 @@ class TestCase(unittest.TestCase):
         self.assertEqual('b', Query('abc').at(1))
 
     def test_at_index_not_int(self):
-        self.assertRaisesRegexp(TypeError,
-            "'foo', the value of index, is not an int.",
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of index, is not an int\.",
             lambda: Query('').at('foo'))
 
     def test_at_negative_index_and_no_default(self):
-        self.assertRaisesRegexp(ValueError,
-            '-1, the value of index, is negative.',
+        self.assertRaisesRegexp(
+            ValueError, '-1, the value of index, is negative\.',
             lambda: Query('').at(-1))
 
     def test_at_negative_index_and_default(self):
         self.assertEqual('?', Query('').at(-1,'?'))
 
     def test_at_index_greater_than_number_of_elements_and_no_default(self):
-        self.assertRaisesRegexp(ValueError,
-            '10, the value of index, is greater than the number of elements.',
+        self.assertRaisesRegexp(
+            ValueError, '10, the value of index, is greater than the number of elements\.',
             lambda: Query('').at(10))
 
     def test_at_index_greater_than_number_of_elements_and_default(self):
@@ -394,6 +394,6 @@ class TestCase(unittest.TestCase):
         self.assertSequenceEqual([], list(Query.repeat('x', 0)))
 
     def test_repeat_with_negative_count(self):
-        self.assertRaisesRegexp(ValueError,
-            '-1, the value of count, is negative\.',
+        self.assertRaisesRegexp(
+            ValueError, '-1, the value of count, is negative\.',
             lambda: Query.repeat('x', -1))

@@ -81,7 +81,7 @@ class Query(object):
 
     def _normalize_func(self, func, name='selector'):
         if not inspect.isfunction(func):
-            raise TypeError('{!r}, the value of {}, is not a function'.format(func, name))
+            raise TypeError('{!r}, the value of {}, is not a function.'.format(func, name))
 
         number_of_args = self._get_number_of_args(func)
         if number_of_args == 1:
@@ -89,7 +89,7 @@ class Query(object):
         if number_of_args == 2:
             return func
         else:
-            raise ValueError('{!r}, the value of {}, has wrong number of args'.format(func, name))
+            raise ValueError('{!r}, the value of {}, has wrong number of args.'.format(func, name))
 
     def _is_iterable_but_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
@@ -109,9 +109,9 @@ class Query(object):
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
         if not inspect.isfunction(resultSelector):
-            raise TypeError('{!r}, the value of resultSelector, is not a function'.format(resultSelector))
+            raise TypeError('{!r}, the value of resultSelector, is not a function.'.format(resultSelector))
         if self._get_number_of_args(resultSelector) != 2:
-            raise ValueError('{!r}, the value of resultSelector, has wrong number of args'.format(resultSelector))
+            raise ValueError('{!r}, the value of resultSelector, has wrong number of args.'.format(resultSelector))
 
         def apply_result_selector(item, collection):
             return itertools.imap(functools.partial(resultSelector, item), collection)
