@@ -43,7 +43,10 @@ class TestCase(unittest.TestCase):
     def test_select_with_index(self):
         self.assertIterEqual(
             [(0,'a'),(1,'b'),(2,'c')],
-            Query(['a', 'b', 'c']).select(lambda i,x: (i,x)))
+            Query(['a', 'b', 'c']).select(lambda i,x: (i,x), with_index=True))
+
+    def test_select_works_with_builtin_callables(self):
+        self.assertIterEqual([1,0,1], Query([-1,0,1]).select(abs))
 
     def test_select_selector_raises(self):
         def raiser(x):
@@ -52,26 +55,11 @@ class TestCase(unittest.TestCase):
             Exception, 'Test',
             lambda: list(Query([1, 2, 3]).select(raiser)))
 
-    def test_select_selector_not_function(self):
-        self.assertRaisesRegexp(
-            TypeError, 'None, the value of selector, is not a function\.',
-            lambda: Query([]).select(None))
-
-    def test_select_selector_has_wrong_number_of_args(self):
-        self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at [^>]*>, the value of selector, has wrong number of args\.',
-            lambda: Query([]).select((lambda: None)))
-
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
 
     def test_selectmany_with_index(self):
         self.assertIterEqual([1, 2, 3, 4, 3, 4], Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x))
-
-    def test_selectmany_selector_not_a_function(self):
-        self.assertRaisesRegexp(
-            TypeError, 'None, the value of selector, is not a function\.',
-            lambda: Query([]).select(None))
 
     def test_selectmany_selector_has_wrong_number_of_args(self):
         self.assertRaisesRegexp(
