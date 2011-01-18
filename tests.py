@@ -468,4 +468,38 @@ class TestCase(unittest.TestCase):
             return x != 3
         self.assertFalse(Query([1,2,3,4]).all(predicate))
 
+    def test_contains_match(self):
+        self.assertTrue(Query([1,2,3]).contains(1))
+
+    def test_contains_no_match(self):
+        self.assertFalse(Query([1,2,3]).contains(5))
+
+    def test_contains_with_key_and_match(self):
+        self.assertTrue(Query([1,2,3]).contains(9, lambda x: x**2))
+
+    def test_contains_with_key_and_no_match(self):
+        self.assertFalse(Query([1,2,3]).contains(25, lambda x: x**2))
+
+    def test_contains_returns_when_match_is_found(self):
+        def selector(x):
+            if x > 3:
+                raise unittest.TestCase.failureException()
+            return x
+        #No exception
+        Query([1,2,3,4]).select(selector).contains(3)
+
+    def test_contains_uses_contains_method_if_able(self):
+        class Container(object):
+            def __int__(self):
+                self.contains_called = False
+            def __contains__(self, item):
+                self.contains_called = True
+                return True
+            def __iter__(self):
+                raise unittest.TestCase.failureException
+        container = Container()
+        Query(container).contains(1)
+
+        self.assertTrue(container.contains_called)
+
 
