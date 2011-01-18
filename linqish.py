@@ -386,6 +386,12 @@ class Query(object):
             return value in self._itersource()
         return value in itertools.imap(key, self._itersource())
 
+    def count(self, predicate=None):
+        if predicate is None and isinstance(self._source, collections.Sized):
+            return len(self._source)
+        predicate = predicate or (lambda x: True)
+        return reduce(lambda x,y: x + 1, itertools.ifilter(predicate, self._itersource()), 0)
+
 _empty = Query([])
 
 class OrderedQuery(Query):
