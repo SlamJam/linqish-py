@@ -148,11 +148,13 @@ class Query(object):
             return self
         return Query(lambda: itertools.islice(self._source, count, None))
 
-    def takewhile(self, predicate):
-        predicate = self._normalize_func(predicate, 'predicate')
-        return Query(lambda: itertools.imap(
-            operator.itemgetter(1),
-            itertools.takewhile(lambda x: predicate(x[0],x[1]), enumerate(self._source))))
+    def takewhile(self, predicate, with_index=False):
+        if not with_index:
+            return Query(lambda: itertools.takewhile(predicate, self._itersource()))
+        else:
+            return Query(lambda: itertools.imap(
+                operator.itemgetter(1),
+                itertools.takewhile(lambda x: predicate(*x), enumerate(self._source))))
 
     def skipwhile(self, predicate):
         predicate = self._normalize_func(predicate, 'predicate')
