@@ -1,5 +1,6 @@
 from linqish import Query
 import collections
+import itertools
 import unittest
 import sys
 
@@ -501,5 +502,26 @@ class TestCase(unittest.TestCase):
         Query(container).contains(1)
 
         self.assertTrue(container.contains_called)
+
+    def test_count_sized_with_no_predicate(self):
+        self.assertEqual(3, Query([1,2,3]).count())
+
+    def test_count_nonsized_with_no_predicate(self):
+        self.assertEqual(3, Query(lambda: itertools.repeat('x', 3)).count())
+
+    def test_count_with_predicate(self):
+        self.assertEqual(2, Query([1,2,3]).count(lambda x: x < 3))
+
+    def test_count_of_iterable_containing_nones(self):
+        self.assertEqual(3, Query([1,2,3]).select(lambda x: None).count())
+
+    def test_count_uses_len_if_able_to(self):
+        class Sized(object):
+            def __len__(self):
+                return 10
+            def __iter__(self):
+                raise unittest.TestCase.failureException
+        sized = Sized()
+        self.assertEqual(10, Query(sized).count())
 
 
