@@ -551,3 +551,15 @@ class TestCase(unittest.TestCase):
     def test_min_with_selector(self):
         self.assertEqual(-3, Query([1,2,3]).min(lambda x: -x))
 
+    def test_max(self):
+        self.assertEqual(3, Query([1,2,3]).max())
+
+    def test_max_empty_source(self):
+        self.assertRaises(ValueError, lambda: Query([]).max())
+
+    def test_max_contains_none(self):
+        self.assertEqual(3, Query([-1,0,1,2,3,None]).max())
+
+    def test_max_with_selector(self):
+        self.assertEqual(-1, Query([1,2,3]).max(lambda x: -x))
+
