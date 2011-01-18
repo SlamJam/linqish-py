@@ -59,27 +59,14 @@ class TestCase(unittest.TestCase):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
 
     def test_selectmany_with_index(self):
-        self.assertIterEqual([1, 2, 3, 4, 3, 4], Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x))
-
-    def test_selectmany_selector_has_wrong_number_of_args(self):
-        self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at [^>]*>, the value of selector, has wrong number of args\.',
-            lambda: Query([]).selectmany(lambda: None))
+        self.assertIterEqual(
+            [1, 2, 3, 4, 3, 4],
+            Query([(1,2), (3,4)]).selectmany(lambda i,x: (i + 1) * x, with_index=True))
 
     def test_selectmany_with_result_selector(self):
         self.assertIterEqual(
             [((1,2), 1), ((1,2), 2), ((3,4), 3), ((3,4), 4)],
             Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer)))
-
-    def test_selectmany_result_selector_not_a_function(self):
-        self.assertRaisesRegexp(
-            TypeError, 'None, the value of resultSelector, is not a function\.',
-            lambda: Query([]).selectmany(lambda x: x, None))
-
-    def test_selectmany_result_selector_has_wrong_number_of_args(self):
-        self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at [^>]*>, the value of resultSelector, has wrong number of args\.',
-            lambda: Query([]).selectmany(lambda x: x, lambda: None))
 
     def test_take(self):
         self.assertIterEqual([1,2], Query([1,2,3]).take(2))
