@@ -398,6 +398,9 @@ class Query(object):
     def min(self, selector=lambda x: x):
         return min(itertools.imap(selector, self._itersource()))
 
+    def max(self, selector=lambda x: x):
+        return max(itertools.imap(selector, self._itersource()))
+
 _empty = Query([])
 
 class OrderedQuery(Query):
