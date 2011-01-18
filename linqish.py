@@ -395,6 +395,9 @@ class Query(object):
     def sum(self, selector=lambda x: x):
         return sum(itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._itersource())))
 
+    def min(self, selector=lambda x: x):
+        return min(itertools.imap(selector, self._itersource()))
+
 _empty = Query([])
 
 class OrderedQuery(Query):
