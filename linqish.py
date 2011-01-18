@@ -8,6 +8,7 @@ import operator
 _missing = object()
 _Tally = collections.namedtuple('Tally', ['sum', 'count'])
 
+@functools.total_ordering
 class _ReverseKey(object):
     def __init__(self, key):
         self._key = key
@@ -17,18 +18,6 @@ class _ReverseKey(object):
 
     def __lt__(self, other):
         return self._key > other._key
-
-    def __gt__(self, other):
-        return self._key < other._key
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __le__(self, other):
-        return self.__lt__(other) or self.__eq__(other)
-
-    def __ge__(self, other):
-        return self.__gt__(other) or self.__eq__(other)
 
 class _Grouping(object):
     def __init__(self, key, elements):
