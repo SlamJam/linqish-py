@@ -120,9 +120,11 @@ class Query(object):
             first, second = itertools.tee(self._source)
             return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
-    def select(self, selector):
-        selector = self._normalize_func(selector)
-        return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
+    def select(self, selector, with_index=False):
+        if not with_index:
+            return Query(lambda: itertools.imap(selector, self._itersource()))
+        else:
+            return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x):
         selector = self._normalize_func(selector)
