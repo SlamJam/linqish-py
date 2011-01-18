@@ -392,6 +392,9 @@ class Query(object):
         predicate = predicate or (lambda x: True)
         return reduce(lambda x,y: x + 1, itertools.ifilter(predicate, self._itersource()), 0)
 
+    def sum(self, selector=lambda x: x):
+        return sum(itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._itersource())))
+
 _empty = Query([])
 
 class OrderedQuery(Query):

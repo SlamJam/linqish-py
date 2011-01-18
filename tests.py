@@ -524,4 +524,17 @@ class TestCase(unittest.TestCase):
         sized = Sized()
         self.assertEqual(10, Query(sized).count())
 
+    def test_sum(self):
+        self.assertEqual(6, Query([1,2,3]).sum())
 
+    def test_sum_ignores_nones(self):
+        self.assertEqual(6, Query([1,2,3,None]).sum())
+
+    def test_sum_empty_source(self):
+        self.assertEqual(0, Query([]).sum())
+
+    def test_sum_source_of_nones(self):
+        self.assertEqual(0, Query(3 * [None]).sum())
+
+    def test_sum_with_selector(self):
+        self.assertEqual(14, Query([1,2,3]).sum(lambda x: x**2))
