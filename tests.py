@@ -34,6 +34,9 @@ class TestCase(unittest.TestCase):
     def test_where_with_index(self):
         self.assertIterEqual(['b', 'c'], Query(['a', 'b', 'c']).where(lambda i,x: i > 0, with_index=True))
 
+    def test_where_works_with_builtin_callables(self):
+        self.assertIterEqual([1,2], Query([0,1,2]).where(abs))
+
     def test_select(self):
         self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
 
