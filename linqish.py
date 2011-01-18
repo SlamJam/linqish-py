@@ -379,6 +379,13 @@ class Query(object):
     def all(self, predicate):
         return all(itertools.imap(predicate, self._itersource()))
 
+    def contains(self, value, key=None):
+        if key is None:
+            if isinstance(self._source, collections.Container):
+                return value in self._source
+            return value in self._itersource()
+        return value in itertools.imap(key, self._itersource())
+
 _empty = Query([])
 
 class OrderedQuery(Query):
