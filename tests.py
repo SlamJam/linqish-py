@@ -575,3 +575,15 @@ class TestCase(unittest.TestCase):
     def test_average_ignores_nones(self):
         self.assertEqual(1.5, Query([1,2,None]).average())
 
+    def test_aggregate(self):
+        self.assertEqual(6, Query([1,2,3]).aggregate(0, lambda x,y: x + y))
+
+    def test_aggregate_starts_with_seed(self):
+        self.assertEqual(10, Query([0,0,0]).aggregate(10, lambda x,y: x + y))
+
+    def test_aggregate_empty_source_returns_seed(self):
+        self.assertEqual(10, Query([]).aggregate(10, lambda x,y: x+y))
+
+    def test_aggregate_with_result_selector(self):
+        self.assertEqual(0, Query([-1,0,1]).aggregate(0, lambda x,y: x+y, abs))
+

@@ -413,6 +413,9 @@ class Query(object):
             tally = _Tally(float(tally.sum),tally.count)
         return tally.sum / tally.count
 
+    def aggregate(self, seed, func, resultSelector=lambda x:x):
+        return resultSelector(reduce(func, self._itersource(), seed))
+
 _empty = Query([])
 
 class OrderedQuery(Query):
