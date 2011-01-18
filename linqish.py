@@ -113,10 +113,12 @@ class Query(object):
     def _itersource(self):
         return callable(self._source) and self._source() or iter(self._source)
 
-    def where(self, predicate):
-        predicate = self._normalize_func(predicate, 'predicate')
-        first, second = itertools.tee(self._source)
-        return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
+    def where(self, predicate, with_index=False):
+        if not with_index:
+            return Query(lambda: itertools.ifilter(predicate, self._itersource()))
+        else:
+            first, second = itertools.tee(self._source)
+            return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
     def select(self, selector):
         selector = self._normalize_func(selector)
