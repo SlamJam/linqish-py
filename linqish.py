@@ -121,25 +121,22 @@ class Query(object):
             return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
     def select(self, selector, with_index=False):
+        return Query(lambda: self._select(self._itersource(), selector, with_index))
+
+    def _select(self, iter_, selector, with_index):
         if not with_index:
-            return Query(lambda: itertools.imap(selector, self._itersource()))
+            return itertools.imap(selector, iter_)
         else:
-            return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
+            return itertools.starmap(selector, enumerate(iter_))
 
-    def selectmany(self, selector, resultSelector=lambda i, x: x):
-        selector = self._normalize_func(selector)
-        if not inspect.isfunction(resultSelector):
-            raise TypeError('{!r}, the value of resultSelector, is not a function.'.format(resultSelector))
-        if self._get_number_of_args(resultSelector) != 2:
-            raise ValueError('{!r}, the value of resultSelector, has wrong number of args.'.format(resultSelector))
-
+    def selectmany(self, selector, resultSelector=lambda i, x: x, with_index=False):
         def apply_result_selector(item, collection):
             return itertools.imap(functools.partial(resultSelector, item), collection)
 
         first, second = itertools.tee(self._itersource())
         return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
             apply_result_selector,
-            itertools.izip(first, itertools.starmap(selector, enumerate(second))))))
+            itertools.izip(first, self._select(second, selector, with_index)))))
 
     def take(self, count):
         if count < 0:
