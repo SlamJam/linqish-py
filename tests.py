@@ -90,12 +90,7 @@ class TestCase(unittest.TestCase):
         self.assertIterEqual([1,2], Query([1,2,3]).takewhile(lambda x: x < 3))
 
     def test_takewhile_with_index(self):
-        self.assertIterEqual([1,2], Query([1,2,3]).takewhile(lambda i,x: i == 0 or x == 2))
-
-    def test_takewhile_predicate_not_function(self):
-        self.assertRaisesRegexp(
-            TypeError, 'None, the value of predicate, is not a function\.',
-            lambda: Query([1,2,3]).takewhile(None))
+        self.assertIterEqual([1,2], Query([1,2,3]).takewhile(lambda i,x: i == 0 or x == 2, with_index=True))
 
     def test_skipwhile(self):
         self.assertIterEqual([3], Query([1,2,3]).skipwhile(lambda x: x < 3))
