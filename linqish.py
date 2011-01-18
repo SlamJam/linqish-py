@@ -92,21 +92,6 @@ class Query(object):
             result = iter(sorted(result, key=lambda x: list(map(lambda y: y(x), self._sort_keys))))
         return result
 
-    def _get_number_of_args(self, func):
-        return len(inspect.getargspec(func)[0])
-
-    def _normalize_func(self, func, name='selector'):
-        if not inspect.isfunction(func):
-            raise TypeError('{!r}, the value of {}, is not a function.'.format(func, name))
-
-        number_of_args = self._get_number_of_args(func)
-        if number_of_args == 1:
-            return lambda i, x: func(x)
-        if number_of_args == 2:
-            return func
-        else:
-            raise ValueError('{!r}, the value of {}, has wrong number of args.'.format(func, name))
-
     def _is_iterable_but_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
 
