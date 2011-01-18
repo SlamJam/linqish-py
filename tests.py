@@ -32,17 +32,7 @@ class TestCase(unittest.TestCase):
         self.assertIterEqual([2, 3], Query([1, 2, 3]).where(lambda x: x > 1))
 
     def test_where_with_index(self):
-        self.assertIterEqual(['b', 'c'], Query(['a', 'b', 'c']).where(lambda i,x: i > 0))
-
-    def test_where_predicate_not_function(self):
-        self.assertRaisesRegexp(
-            TypeError, 'None, the value of predicate, is not a function\.',
-            lambda: Query([]).where(None))
-
-    def test_where_predicate_has_wrong_number_of_args(self):
-        self.assertRaisesRegexp(
-            ValueError, '<function <lambda> at [^>]*>, the value of predicate, has wrong number of args\.',
-            lambda: Query([]).where((lambda: None)))
+        self.assertIterEqual(['b', 'c'], Query(['a', 'b', 'c']).where(lambda i,x: i > 0, with_index=True))
 
     def test_select(self):
         self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
