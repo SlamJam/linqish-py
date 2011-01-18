@@ -6,6 +6,7 @@ import operator
 
 # used to indicate missing values
 _missing = object()
+_Tally = collections.namedtuple('Tally', ['sum', 'count'])
 
 class _ReverseKey(object):
     def __init__(self, key):
@@ -400,6 +401,17 @@ class Query(object):
 
     def max(self, selector=lambda x: x):
         return max(itertools.imap(selector, self._itersource()))
+
+    def average(self, selector=lambda x: x):
+        tally = reduce(lambda x,y: _Tally(x.sum + y, x.count + 1),
+                       itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._itersource())),
+                       _Tally(0,0))
+        if not tally.count:
+            return None
+        #To avoid integer division
+        if type(tally.sum) is int:
+            tally = _Tally(float(tally.sum),tally.count)
+        return tally.sum / tally.count
 
 _empty = Query([])
 

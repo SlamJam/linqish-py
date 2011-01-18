@@ -563,3 +563,15 @@ class TestCase(unittest.TestCase):
     def test_max_with_selector(self):
         self.assertEqual(-1, Query([1,2,3]).max(lambda x: -x))
 
+    def test_average(self):
+        self.assertEqual(1.5, Query([1.0,2.0]).average())
+
+    def test_average_with_ints_does_not_floor_result(self):
+        self.assertEqual(1.5, Query([1,2]).average())
+
+    def test_average_empty_source(self):
+        self.assertEqual(None, Query([]).average())
+
+    def test_average_ignores_nones(self):
+        self.assertEqual(1.5, Query([1,2,None]).average())
+
