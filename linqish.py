@@ -156,11 +156,13 @@ class Query(object):
                 operator.itemgetter(1),
                 itertools.takewhile(lambda x: predicate(*x), enumerate(self._source))))
 
-    def skipwhile(self, predicate):
-        predicate = self._normalize_func(predicate, 'predicate')
-        return Query(lambda: itertools.imap(
-            operator.itemgetter(1),
-            itertools.dropwhile(lambda x: predicate(x[0],x[1]), enumerate(self._source))))
+    def skipwhile(self, predicate, with_index=False):
+        if not with_index:
+            return Query(lambda: itertools.dropwhile(predicate, self._itersource()))
+        else:
+            return Query(lambda: itertools.imap(
+                operator.itemgetter(1),
+                itertools.dropwhile(lambda x: predicate(*x), enumerate(self._source))))
 
     def join(self, other, keySelector, otherKeySelector, resultSelector):
         return Query(functools.partial(self._join, other, keySelector, otherKeySelector, resultSelector))
