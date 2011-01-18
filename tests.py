@@ -538,3 +538,16 @@ class TestCase(unittest.TestCase):
 
     def test_sum_with_selector(self):
         self.assertEqual(14, Query([1,2,3]).sum(lambda x: x**2))
+
+    def test_min(self):
+        self.assertEqual(1, Query([1,2,3]).min())
+
+    def test_min_empty_source(self):
+        self.assertRaises(ValueError, lambda: Query([]).min())
+
+    def test_min_contains_none(self):
+        self.assertEqual(None, Query([-1,0,1,2,3,None]).min())
+
+    def test_min_with_selector(self):
+        self.assertEqual(-3, Query([1,2,3]).min(lambda x: -x))
+
