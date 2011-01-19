@@ -518,6 +518,11 @@ class Quantifiers(TestCase):
         self.assertTrue(container.contains_called)
 
 class Aggregation(TestCase):
+    def test_count_predicate_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of predicate, is neither None nor callable\.",
+            lambda: Query([1,2,3]).count('foo'))
+
     def test_count_sized_with_no_predicate(self):
         self.assertEqual(3, Query([1,2,3]).count())
 

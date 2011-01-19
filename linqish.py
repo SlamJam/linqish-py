@@ -373,6 +373,9 @@ class Query(object):
         return value in itertools.imap(key, self._itersource())
 
     def count(self, predicate=None):
+        if predicate is not None and not callable(predicate):
+            raise TypeError("{!r}, the value of predicate, is neither None nor callable.".format(predicate))
+
         if predicate is None and isinstance(self._source, collections.Sized):
             return len(self._source)
         predicate = predicate or (lambda x: True)
