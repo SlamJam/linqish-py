@@ -491,6 +491,19 @@ Query.range.__doc__ = """Returns a Query which will yield count successive integ
 
 Query.empty.__doc__ = """Returns a Query with an empty source."""
 
+Query.repeat.__doc__ = """Returns a Query that yields element count times.
+
+    Arguments:
+      element -- The object to yield
+      count   -- The number of times to yield element
+
+    Returns:
+      A Query that yields element count times.
+
+    Raises:
+      A ValueError is raised if count is negative.
+    """
+
 _empty = Query([])
 
 class OrderedQuery(Query):
