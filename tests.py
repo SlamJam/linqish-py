@@ -22,12 +22,14 @@ class TestCase(unittest.TestCase):
     def assertIterEqual(self, iter1, iter2):
         self.assertSequenceEqual(list(iter1), list(iter2))
 
+class Init(TestCase):
     def test_init_source_not_an_iterable(self):
         self.assertRaisesRegexp(
             TypeError,
             'None, value of source, must be iterable but not an iterator or a callable returning an iterator\.',
             lambda: Query(None))
 
+class Restriction(TestCase):
     def test_where(self):
         self.assertIterEqual([2, 3], Query([1, 2, 3]).where(lambda x: x > 1))
 
@@ -37,6 +39,7 @@ class TestCase(unittest.TestCase):
     def test_where_works_with_builtin_callables(self):
         self.assertIterEqual([1,2], Query([0,1,2]).where(abs))
 
+class Projection(TestCase):
     def test_select(self):
         self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
 
@@ -68,6 +71,7 @@ class TestCase(unittest.TestCase):
             [((1,2), 1), ((1,2), 2), ((3,4), 3), ((3,4), 4)],
             Query([(1,2), (3,4)]).selectmany(lambda x: x, lambda inner, outer: (inner, outer)))
 
+class Partitioning(TestCase):
     def test_take(self):
         self.assertIterEqual([1,2], Query([1,2,3]).take(2))
 
@@ -98,6 +102,7 @@ class TestCase(unittest.TestCase):
     def test_skipwhile_with_index(self):
         self.assertIterEqual([3], Query([1,2,3]).skipwhile(lambda i,x: i == 0 or x == 2, with_index=True))
 
+class Join(TestCase):
     def test_join(self):
         self.assertIterEqual(
             [(1,1),(2,2),(3,3)],
@@ -143,10 +148,11 @@ class TestCase(unittest.TestCase):
             [(1,[1,3]), (2,[2]), (3,[1,3])],
             Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair))
 
+class Concatenation(TestCase):
     def test_concat(self):
         self.assertIterEqual([1, 2, 3], Query([1]).concat([2,3]))
 
-
+class Ordering(TestCase):
     def test_orderby(self):
         self.assertIterEqual([0, -1, 1], Query([-1, 0, 1]).orderby(lambda x: x**2))
 
@@ -172,11 +178,13 @@ class TestCase(unittest.TestCase):
     def test_reverse(self):
         self.assertIterEqual([3,2,1], Query([1,2,3]).reverse())
 
+class Grouping(TestCase):
     def test_groupby(self):
         self.assertIterEqual(
             [(3, ['ONE', 'TWO']), (5, ['THREE']), (4, ['FOUR', 'FIVE'])],
             Query(['one', 'two', 'three', 'four', 'five']).groupby(len, str.upper, lambda k,e: (k, list(e))))
 
+class SetOperators(TestCase):
     def test_distinct(self):
         self.assertIterEqual([-1,0,2], Query([-1,0,1,2]).distinct(abs))
 
@@ -189,6 +197,7 @@ class TestCase(unittest.TestCase):
     def test_except(self):
         self.assertIterEqual([-2, 0], Query([-2,-2,-1,0]).except_([1,1], abs))
 
+class Conversion(TestCase):
     def test_tolist(self):
         self.assertEqual([1,2,3], Query([1,2,3]).tolist())
 
@@ -215,6 +224,7 @@ class TestCase(unittest.TestCase):
         grouping = next(result)
         self.assertEqual(0, grouping.key)
 
+class Equality(TestCase):
     def test_iter_equal_other_not_iterable(self):
         self.assertRaisesRegexp(
             TypeError, '0, the value of other, is not iterable\.',
@@ -237,6 +247,7 @@ class TestCase(unittest.TestCase):
         key = lambda x: True
         self.assertFalse(Query([]).iter_equal([1], key))
 
+class ElementOperators(TestCase):
     def test_iter_equal_with_other_shorter(self):
         key = lambda x: True
         self.assertFalse(Query([1]).iter_equal([], key))
@@ -341,6 +352,7 @@ class TestCase(unittest.TestCase):
         source.extend([1,2,3])
         self.assertIterEqual([1,2,3], result)
 
+class Generation(TestCase):
     def test_range(self):
         self.assertIterEqual([1,2,3], Query.range(1,3))
 
@@ -386,6 +398,7 @@ class TestCase(unittest.TestCase):
     def test_empty_value_is_cached(self):
         self.assertTrue(Query.empty() is Query.empty())
 
+class Quantifiers(TestCase):
     def test_any_empty_source(self):
         self.assertFalse(Query([]).any(lambda x: True))
 
@@ -461,6 +474,7 @@ class TestCase(unittest.TestCase):
 
         self.assertTrue(container.contains_called)
 
+class Aggregation(TestCase):
     def test_count_sized_with_no_predicate(self):
         self.assertEqual(3, Query([1,2,3]).count())
 
