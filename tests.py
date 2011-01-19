@@ -45,10 +45,10 @@ class Restriction(TestCase):
             lambda: Query([]).where('foo'))
 
     def test_where(self):
-        self.assertIterEqual([2, 3], Query([1, 2, 3]).where(lambda x: x > 1))
+        self.assertIterEqual('BC', Query('aBC').where(str.isupper))
 
     def test_where_with_index(self):
-        self.assertIterEqual(['b', 'c'], Query(['a', 'b', 'c']).where(lambda i,x: i > 0, with_index=True))
+        self.assertIterEqual('bc', Query('abc').where(lambda index, item: index > 0, with_index=True))
 
     def test_where_works_with_builtin_callables(self):
         self.assertIterEqual([1,2], Query([0,1,2]).where(abs))
