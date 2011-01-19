@@ -471,6 +471,24 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
+Query.range.__doc__ = """Returns a Query which will yield count successive integers starting at start.
+
+    Arguments:
+      start -- The integer to start with
+      count -- The range of integers to return
+
+    Returns:
+      Returns a Query which will yield count successive integers starting at start.
+
+    Exceptions:
+      A ValueError is raised if the value of count is negative or
+      if the value of start + count > sys.maxint which results in an overflow.
+
+    Examples:
+      >>> list(Query.range(1,5))
+      [1, 2, 3, 4, 5]
+    """
+
 _empty = Query([])
 
 class OrderedQuery(Query):
