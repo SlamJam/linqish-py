@@ -87,6 +87,15 @@ class Projection(TestCase):
     def test_select_works_with_builtin_callables(self):
         self.assertIterEqual([1,0,1], Query([-1,0,1]).select(abs))
 
+    def test_select_execution_is_deferred(self):
+        #No exception
+        Query(_RaisingIter()).select(abs)
+
+    def test_select_items_are_streamed(self):
+        #No exception
+        iter_ = iter(Query(_RaisingOnSecondIter).select(lambda x: True))
+        next(iter_)
+
     def test_select_propagates_exceptions_raised_by_selector(self):
         self.assertRaisesRegexp(
             Exception, 'test',
