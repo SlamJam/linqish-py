@@ -502,6 +502,10 @@ Query.repeat.__doc__ = """Returns a Query that yields element count times.
 
     Raises:
       A ValueError is raised if count is negative.
+
+    Examples:
+      >>> list(Query.repeat('SPAM!', 3))
+      ['SPAM!', 'SPAM!', 'SPAM!']
     """
 
 _empty = Query([])
