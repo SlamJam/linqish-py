@@ -404,71 +404,71 @@ class Query(object):
     where.__doc__ = """Filters the source using the predicate.
 
     Arguments:
-    predicate  -- The predicate used for filtering
-    with_index -- False for the predicate to be called as predicate(item)
+      predicate  -- The predicate used for filtering
+      with_index -- False for the predicate to be called as predicate(item)
                   True for it to be called as predicate(index, item)
 
     Returns:
-    A Query instance with the source items filtered by the predicate.
+      A Query instance with the source items filtered by the predicate.
 
     Exceptions:
-    A TypeError is raised if the value of predicate is not callable.
+      A TypeError is raised if the value of predicate is not callable.
 
     Description:
-    This method returns a Query instance with the source items filtered
-    so that only items where predicate(item) is true are included.
+      This method returns a Query instance with the source items filtered
+      so that only items where predicate(item) is true are included.
 
-    If with_index=True is specified, only items where
-    predicate(index, item) is true are included. index is the zero-based
-    index of the item in source.
+      If with_index=True is specified, only items where
+      predicate(index, item) is true are included. index is the zero-based
+      index of the item in source.
 
-    The order of the result items is the same as that of the source.
-    Execution is deferred until the Query instance is iterated.
-    The result items are streamed as they are iterated.
-    Exceptions raised by the predicate are propagated.
+      The order of the result items is the same as that of the source.
+      Execution is deferred until the Query instance is iterated.
+      The result items are streamed as they are iterated.
+      Exceptions raised by the predicate are propagated.
 
     Examples:
-    >>> list(Query([1, 2, 3, 4, 5]).where(lambda item: item > 2))
-    [3, 4, 5]
+      >>> list(Query([1, 2, 3, 4, 5]).where(lambda item: item > 2))
+      [3, 4, 5]
 
-    >>> list(Query([1, 2, 3, 4, 5])
-    ...     .where(lambda index, item: index < 1 or item > 2, with_index=True))
-    [1, 3, 4, 5]
+      >>> list(Query([1, 2, 3, 4, 5])
+      ...     .where(lambda index, item: index < 1 or item > 2, with_index=True))
+      [1, 3, 4, 5]
     """
 
     select.__doc__ = """Projects the source using the selector.
 
     Arguments:
-    selector   -- The selector used for projection
-    with_index -- False for the selector to be called as selector(item)
+      selector   -- The selector used for projection
+      with_index -- False for the selector to be called as selector(item)
                   True for it to be called as selector(index, item)
 
     Returns:
-    A Query instance with source items projected using selector.
+      A Query instance with source items projected using selector.
 
     Exceptions:
-    A TypeError is raised if the value of selector is not callable.
+      A TypeError is raised if the value of selector is not callable.
 
     Description:
-    This method returns a Query that yields selector(item) for each item of the
-    source.
+      This method returns a Query that yields selector(item) for each item of the
+      source.
 
-    If with_index=True is specified, the returned query yields
-    selector(index, item) instead, where index is the zero-based index of the
-    item in source.
+      If with_index=True is specified, the returned query yields
+      selector(index, item) instead, where index is the zero-based index of the
+      item in source.
 
-    The order of the result items corresponds to the order of the source items.
-    Execution is deferred until the Query instance is iterated.
-    The result items are streamed as they are iterated.
-    Exceptions raised by the selector are propagated.
+      The order of the result items corresponds to the order of the source items.
+      Execution is deferred until the Query instance is iterated.
+      The result items are streamed as they are iterated.
+      Exceptions raised by the selector are propagated.
 
     Examples:
-    >>> list(Query([1, 2, 3, 4, 5]).select(lambda item: item ** 2))
-    [1, 4, 9, 16, 25]
+      >>> list(Query([1, 2, 3, 4, 5]).select(lambda item: item ** 2))
+      [1, 4, 9, 16, 25]
 
-    >>> list(Query([1, 2, 3, 4, 5])
-    ...     .select(lambda index, item: index * item, with_index=True))
-    [0, 2, 6, 12, 20]
+      >>> list(Query([1, 2, 3, 4, 5])
+      ...     .select(lambda index, item: index * item, with_index=True))
+      [0, 2, 6, 12, 20]
     """
 
 _empty = Query([])
