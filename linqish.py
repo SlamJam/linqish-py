@@ -407,6 +407,9 @@ class Query(object):
     Returns:
     A Query instance with the source items filtered by the predicate.
 
+    Exceptions:
+    A TypeError is raised if the value of predicate is not callable.
+
     Description:
     This method returns a Query instance with the source items filtered
     so that only items where predicate(item) is true are included.
