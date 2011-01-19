@@ -474,6 +474,22 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
+    concat.__doc__ =  """Returns a Query containing the concatenation of source and other.
+
+    Arguments:
+      other - The iterable to concatenate
+
+    Returns:
+      A Query object containing the concatenation of source and other. In
+      other words, an instance of Query that yields all the items in source and
+      then all the items in other.
+
+    Examples:
+      >>> list(Query([1, 2]).concat([3, 4, 5]))
+      [1, 2, 3, 4, 5]
+    """
+
+
     count.__doc__ = """Returns the number of items in source matching predicate.
 
     Arguments:
