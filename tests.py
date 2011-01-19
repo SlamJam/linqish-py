@@ -18,6 +18,9 @@ def _consume(query):
     except StopIteration:
         pass
 
+def _raise_test_exception(*args,**kwargs):
+    raise Exception('test')
+
 class _RaisingIter(object):
     def __iter__(self):
         raise unittest.TestCase.failureException()
@@ -79,12 +82,10 @@ class Projection(TestCase):
     def test_select_works_with_builtin_callables(self):
         self.assertIterEqual([1,0,1], Query([-1,0,1]).select(abs))
 
-    def test_select_selector_raises(self):
-        def raiser(x):
-            raise Exception('Test')
+    def test_select_propagates_exceptions_raised_by_selector(self):
         self.assertRaisesRegexp(
-            Exception, 'Test',
-            lambda: list(Query([1, 2, 3]).select(raiser)))
+            Exception, 'test',
+            lambda: list(Query([1, 2, 3]).select(_raise_test_exception)))
 
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
