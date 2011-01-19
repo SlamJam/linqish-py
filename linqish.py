@@ -432,6 +432,37 @@ class Query(object):
     [3, 4, 5]
     """
 
+    select.__doc__ = """Projects the source using the selector.
+
+    Arguments:
+    predicate  -- The selector used for projection
+    with_index -- False for the selector to be called as selector(item)
+                  True for it to be called as selector(index, item)
+
+    Returns:
+    A Query instance with source items projected using selector.
+
+    Exceptions:
+    A TypeError is raised if the value of selector is not callable.
+
+    Description:
+    This method returns a Query that yields selector(item) for each item of the
+    source.
+
+    If with_index=True is specified, the returned query yields
+    selector(index, item) instead, where index is the zero-based index of the
+    item in source.
+
+    The order of the result items corresponds to the order of the source items.
+    Execution is deferred until the Query instance is iterated.
+    The result items are streamed as they are iterated.
+    Exceptions raised by predicate are propagated.
+
+    Example:
+    >>> list(Query([-1,0,1]).select(abs))
+    [1, 0, 1]
+    """
+
 _empty = Query([])
 
 class OrderedQuery(Query):
