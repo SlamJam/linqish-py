@@ -396,6 +396,12 @@ class ElementOperators(TestCase):
         self.assertIterEqual([1,2,3], result)
 
 class Generation(TestCase):
+    def test_empty(self):
+        self.assertIterEqual([], Query.empty())
+
+    def test_empty_value_is_cached(self):
+        self.assertTrue(Query.empty() is Query.empty())
+
     def test_range(self):
         self.assertIterEqual([1,2,3], Query.range(1,3))
 
@@ -434,12 +440,6 @@ class Generation(TestCase):
         self.assertRaisesRegexp(
             ValueError, '-1, the value of count, is negative\.',
             lambda: Query.repeat('x', -1))
-
-    def test_empty(self):
-        self.assertIterEqual([], Query.empty())
-
-    def test_empty_value_is_cached(self):
-        self.assertTrue(Query.empty() is Query.empty())
 
 class Quantifiers(TestCase):
     def test_any_empty_source(self):
