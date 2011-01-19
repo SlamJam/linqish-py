@@ -537,7 +537,7 @@ Query.range.__doc__ = """Returns a Query which will yield count successive integ
 
     Arguments:
       start -- The integer to start with
-      count -- The range of integers to return
+      count -- The number of integers to return
 
     Returns:
       Returns a Query which will yield count successive integers starting at start.
