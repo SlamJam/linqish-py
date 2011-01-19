@@ -118,6 +118,11 @@ class Query(object):
             return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x, with_index=False):
+        if not callable(selector):
+            raise TypeError("{!r}, the value of selector, is not callable.".format(selector))
+        if not callable(resultSelector):
+            raise TypeError("{!r}, the value of resultSelector, is not callable.".format(resultSelector))
+
         return Query(lambda: self._selectmany(selector, resultSelector, with_index))
 
     def _selectmany(self, selector, resultSelector, with_index):
