@@ -65,6 +65,11 @@ class Restriction(TestCase):
         iter_ = iter(Query(_RaisingOnSecondIter).where(lambda x: True))
         next(iter_)
 
+    def test_where_propagates_exceptions_raised_by_predicate(self):
+        self.assertRaisesRegexp(
+            Exception, 'test',
+            lambda: list(Query([1, 2, 3]).where(_raise_test_exception)))
+
 class Projection(TestCase):
     def test_select_selector_is_noncallable(self):
         self.assertRaisesRegexp(
