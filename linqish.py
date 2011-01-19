@@ -464,7 +464,7 @@ class Query(object):
     Arguments:
       selector   -- The selector used for projection
       with_index -- False for the selector to be called as selector(item)
-                  True for it to be called as selector(index, item)
+                    True for it to be called as selector(index, item)
 
     Returns:
       A Query instance with source items projected using selector.
@@ -493,6 +493,51 @@ class Query(object):
       ...     .select(lambda index, item: index * item, with_index=True))
       [0, 2, 6, 12, 20]
     """
+
+    selectmany.__doc__ = """Performs a one-to-many projection on source
+
+    Arguments:
+      selector       -- Callable, accepting one or two arguments depending on
+                        the value of with_index, and returning an
+                        iterable, used to project source elements to iterables
+      resultSelector -- Callable, accepting two arguments, that combines the
+                        element and its collection projection to project
+                        a result
+      with_index     -- False for the selector to be called as selector(item)
+                        True for it to be called as selector(index, item)
+
+    Returns:
+      Returns a Query instance containing a one-to-many project of
+      the source items using selector and then resultSelector.
+
+    Raises:
+      TypeError if selector is not callable or resultSelector is not callable.
+
+    Description:
+      The source items are projected to iterables using selector, then
+      each item of these iterables is projected to a result element by
+      resultSelector.
+
+      The order of the result items corresponds to the order of the source items
+      and then items projected by selector.
+      Execution is deferred until the Query instance is iterated.
+      The result items are streamed as they are iterated.
+      Exceptions raised by the selector are propagated.
+
+    Examples:
+      >>> list(Query([1, 2, 3]).selectmany(lambda item: range(1, item + 1)))
+      [1, 1, 2, 1, 2, 3]
+
+      >>> list(Query([1, 2, 3]).selectmany(
+      ...     lambda item: range(1, item + 1),
+      ...     lambda item, subitem: item * subitem))
+      [1, 2, 4, 3, 6, 9]
+
+      >>> list(Query([1, 2, 3]).selectmany(
+      ...     lambda index, item: range(index, item + 1),
+      ...     with_index=True))
+      [0, 1, 1, 2, 2, 3]
+   """
 
     concat.__doc__ =  """Returns a Query containing the concatenation of source and other.
 
