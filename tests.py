@@ -68,7 +68,7 @@ class Restriction(TestCase):
     def test_where_propagates_exceptions_raised_by_predicate(self):
         self.assertRaisesRegexp(
             Exception, 'test',
-            lambda: list(Query([1, 2, 3]).where(_raise_test_exception)))
+            lambda: list(Query(['abc']).where(_raise_test_exception)))
 
 class Projection(TestCase):
     def test_select_selector_is_noncallable(self):
@@ -90,7 +90,7 @@ class Projection(TestCase):
     def test_select_propagates_exceptions_raised_by_selector(self):
         self.assertRaisesRegexp(
             Exception, 'test',
-            lambda: list(Query([1, 2, 3]).select(_raise_test_exception)))
+            lambda: list(Query(['abc']).select(_raise_test_exception)))
 
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
