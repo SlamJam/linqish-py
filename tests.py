@@ -69,7 +69,7 @@ class Projection(TestCase):
             lambda: Query([]).select('foo'))
 
     def test_select(self):
-        self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
+        self.assertIterEqual('abc', list(Query('abc').select(lambda x: x)))
 
     def test_select_with_index(self):
         self.assertIterEqual(
