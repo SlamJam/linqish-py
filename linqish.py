@@ -428,8 +428,12 @@ class Query(object):
     Exceptions raised by the predicate are propagated.
 
     Example:
-    >>> list(Query([1,2,3,4,5]).where(lambda x: x > 2))
+    >>> list(Query([1, 2, 3, 4, 5]).where(lambda item: item > 2))
     [3, 4, 5]
+
+    >>> list(Query([1, 2, 3, 4, 5])
+    ...     .where(lambda index, item: index < 1 or item > 2, with_index=True))
+    [1, 3, 4, 5]
     """
 
     select.__doc__ = """Projects the source using the selector.
