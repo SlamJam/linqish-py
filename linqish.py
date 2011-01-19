@@ -471,7 +471,7 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
-Query.empty.__doc__ = """Returns a Query with an empty source."""
+Query.empty.__doc__ = """Returns an empty Query with no items."""
 
 Query.range.__doc__ = """Returns a Query which will yield count successive integers starting at start.
 
