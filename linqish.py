@@ -439,7 +439,7 @@ class Query(object):
     select.__doc__ = """Projects the source using the selector.
 
     Arguments:
-    predicate  -- The selector used for projection
+    selector   -- The selector used for projection
     with_index -- False for the selector to be called as selector(item)
                   True for it to be called as selector(index, item)
 
