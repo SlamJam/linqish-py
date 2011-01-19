@@ -427,7 +427,7 @@ class Query(object):
     The result items are streamed as they are iterated.
     Exceptions raised by the predicate are propagated.
 
-    Example:
+    Examples:
     >>> list(Query([1, 2, 3, 4, 5]).where(lambda item: item > 2))
     [3, 4, 5]
 
@@ -462,7 +462,7 @@ class Query(object):
     The result items are streamed as they are iterated.
     Exceptions raised by the selector are propagated.
 
-    Example:
+    Examples:
     >>> list(Query([1, 2, 3, 4, 5]).select(lambda item: item ** 2))
     [1, 4, 9, 16, 25]
 
