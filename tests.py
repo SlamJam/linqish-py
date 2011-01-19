@@ -101,6 +101,16 @@ class Projection(TestCase):
             Exception, 'test',
             lambda: list(Query(['abc']).select(_raise_test_exception)))
 
+    def test_selectmany_selector_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of selector, is not callable\.",
+            lambda: Query([]).selectmany('foo'))
+
+    def test_selectmany_resultselector_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of resultSelector, is not callable\.",
+            lambda: Query([]).selectmany(lambda x: x, 'foo'))
+
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
 
