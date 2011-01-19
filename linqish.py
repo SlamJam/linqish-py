@@ -411,7 +411,7 @@ class Query(object):
     Returns:
       A Query instance with the source items filtered by the predicate.
 
-    Exceptions:
+    Raises:
       A TypeError is raised if the value of predicate is not callable.
 
     Description:
@@ -446,7 +446,7 @@ class Query(object):
     Returns:
       A Query instance with source items projected using selector.
 
-    Exceptions:
+    Raises:
       A TypeError is raised if the value of selector is not callable.
 
     Description:
@@ -480,7 +480,7 @@ Query.range.__doc__ = """Returns a Query which will yield count successive integ
     Returns:
       Returns a Query which will yield count successive integers starting at start.
 
-    Exceptions:
+    Raises:
       A ValueError is raised if the value of count is negative or
       if the value of start + count > sys.maxint which results in an overflow.
 
