@@ -484,6 +484,9 @@ class Query(object):
       The number of items in source matching predicate or the number of items
       if predicate is None.
 
+    Raises:
+      A TypeError is raised if predicate is neither None nor callable.
+
     Examples:
       >>> Query([1, 2, 3, 4, 5]).count(lambda item: item > 2)
       3
