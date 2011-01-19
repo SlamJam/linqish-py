@@ -39,7 +39,7 @@ class Init(TestCase):
             lambda: Query(None))
 
 class Restriction(TestCase):
-    def test_where_noncallable_predicate(self):
+    def test_where_predicate_is_noncallable(self):
         self.assertRaisesRegexp(
             TypeError, "'foo', the value of predicate, is not callable\.",
             lambda: Query([]).where('foo'))
