@@ -39,6 +39,11 @@ class Init(TestCase):
             lambda: Query(None))
 
 class Restriction(TestCase):
+    def test_where_noncallable_predicate(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of predicate, is not callable\.",
+            lambda: Query([]).where('foo'))
+
     def test_where(self):
         self.assertIterEqual([2, 3], Query([1, 2, 3]).where(lambda x: x > 1))
 
@@ -50,7 +55,7 @@ class Restriction(TestCase):
 
     def test_where_execution_is_deferred(self):
         #No exception
-        Query(_RaisingIter()).where([1,2])
+        Query(_RaisingIter()).where(abs)
 
     def test_where_items_are_streamed(self):
         #No exception
