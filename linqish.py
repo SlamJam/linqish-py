@@ -401,7 +401,7 @@ class Query(object):
     def aggregate(self, seed, func, resultSelector=lambda x:x):
         return resultSelector(reduce(func, self._itersource(), seed))
 
-    where.__doc__ = """Filters the source with the predicate.
+    where.__doc__ = """Filters the source using the predicate.
 
     Arguments:
     predicate  -- The predicate used for filtering
@@ -422,10 +422,10 @@ class Query(object):
     predicate(index, item) is true are included. index is the zero-based
     index of the item in source.
 
-    The order of the items is the same as that of the source.
-    Execution is deferred until the Query is iterated.
-    The items are streamed as they are iterated.
-    Exceptions raised by predicate are propagated.
+    The order of the result items is the same as that of the source.
+    Execution is deferred until the Query instance is iterated.
+    The result items are streamed as they are iterated.
+    Exceptions raised by the predicate are propagated.
 
     Example:
     >>> list(Query([1,2,3,4,5]).where(lambda x: x > 2))
@@ -456,7 +456,7 @@ class Query(object):
     The order of the result items corresponds to the order of the source items.
     Execution is deferred until the Query instance is iterated.
     The result items are streamed as they are iterated.
-    Exceptions raised by predicate are propagated.
+    Exceptions raised by the selector are propagated.
 
     Example:
     >>> list(Query([-1,0,1]).select(abs))
