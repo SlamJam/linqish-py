@@ -463,8 +463,12 @@ class Query(object):
     Exceptions raised by the selector are propagated.
 
     Example:
-    >>> list(Query([-1,0,1]).select(abs))
-    [1, 0, 1]
+    >>> list(Query([1, 2, 3, 4, 5]).select(lambda item: item ** 2))
+    [1, 4, 9, 16, 25]
+
+    >>> list(Query([1, 2, 3, 4, 5])
+    ...     .select(lambda index, item: index * item, with_index=True))
+    [0, 2, 6, 12, 20]
     """
 
 _empty = Query([])
