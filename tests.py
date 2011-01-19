@@ -22,6 +22,11 @@ class _RaisingIter(object):
     def __iter__(self):
         raise unittest.TestCase.failureException()
 
+class _RaisingOnSecondIter(object):
+    def __iter__(self):
+        yield 1
+        raise unittest.TestCase.failureException()
+
 class TestCase(unittest.TestCase):
     def assertIterEqual(self, iter1, iter2):
         self.assertSequenceEqual(list(iter1), list(iter2))
@@ -46,6 +51,11 @@ class Restriction(TestCase):
     def test_where_execution_is_deferred(self):
         #No exception
         Query(_RaisingIter()).where([1,2])
+
+    def test_where_items_are_streamed(self):
+        #No exception
+        iter_ = iter(Query(_RaisingOnSecondIter).where(lambda x: True))
+        next(iter_)
 
 class Projection(TestCase):
     def test_select(self):
