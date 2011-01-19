@@ -74,7 +74,7 @@ class Projection(TestCase):
     def test_select_with_index(self):
         self.assertIterEqual(
             [(0,'a'),(1,'b'),(2,'c')],
-            Query(['a', 'b', 'c']).select(lambda i,x: (i,x), with_index=True))
+            Query('abc').select(lambda i,x: (i,x), with_index=True))
 
     def test_select_works_with_builtin_callables(self):
         self.assertIterEqual([1,0,1], Query([-1,0,1]).select(abs))
