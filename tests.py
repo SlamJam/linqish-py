@@ -63,6 +63,11 @@ class Restriction(TestCase):
         next(iter_)
 
 class Projection(TestCase):
+    def test_select_selector_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of selector, is not callable\.",
+            lambda: Query([]).select('foo'))
+
     def test_select(self):
         self.assertIterEqual([1, 2, 3], list(Query([1, 2, 3]).select(lambda x: x)))
 

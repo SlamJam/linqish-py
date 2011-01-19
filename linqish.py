@@ -108,6 +108,8 @@ class Query(object):
             return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
 
     def select(self, selector, with_index=False):
+        if not callable(selector):
+            raise TypeError('{!r}, the value of selector, is not callable.'.format(selector))
         return Query(lambda: self._select(self._itersource(), selector, with_index))
 
     def _select(self, iter_, selector, with_index):
