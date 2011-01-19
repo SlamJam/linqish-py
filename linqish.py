@@ -101,6 +101,7 @@ class Query(object):
     def where(self, predicate, with_index=False):
         if not callable(predicate):
             raise TypeError('{!r}, the value of predicate, is not callable.'.format(predicate))
+
         if not with_index:
             return Query(lambda: itertools.ifilter(predicate, self._itersource()))
         else:
@@ -110,6 +111,7 @@ class Query(object):
     def select(self, selector, with_index=False):
         if not callable(selector):
             raise TypeError('{!r}, the value of selector, is not callable.'.format(selector))
+
         return Query(lambda: self._select(self._itersource(), selector, with_index))
 
     def _select(self, iter_, selector, with_index):
