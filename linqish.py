@@ -489,6 +489,8 @@ Query.range.__doc__ = """Returns a Query which will yield count successive integ
       [1, 2, 3, 4, 5]
     """
 
+Query.empty.__doc__ = """Returns a Query with an empty source."""
+
 _empty = Query([])
 
 class OrderedQuery(Query):
