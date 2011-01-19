@@ -99,33 +99,6 @@ class Query(object):
         return callable(self._source) and self._source() or iter(self._source)
 
     def where(self, predicate, with_index=False):
-        """Filters the source with the predicate.
-
-        Arguments:
-        predicate  -- The predicate used for filtering
-        with_index -- False for the predicate to be called as predicate(item)
-                      True for it to be called as predicate(index, item)
-
-        Returns:
-        A Query instance with the source items filtered by the predicate.
-
-        Description:
-        This method returns a Query instance with the source items filtered
-        so that only items where predicate(item) is true are included.
-
-        If with_index=True is specified, only items where
-        predicate(index, item) is true are included. index is the zero-based
-        index of the item in source.
-
-        The order of the items is the same as that of the source.
-        Execution is deferred until the Query is iterated.
-        The items are streamed as they are iterated.
-        Exceptions raised by predicate are propagated.
-
-        Example:
-        >>> list(Query([1,2,3,4,5]).where(lambda x: x > 2))
-        [3, 4, 5]
-        """
         if not with_index:
             return Query(lambda: itertools.ifilter(predicate, self._itersource()))
         else:
@@ -421,6 +394,34 @@ class Query(object):
 
     def aggregate(self, seed, func, resultSelector=lambda x:x):
         return resultSelector(reduce(func, self._itersource(), seed))
+
+    where.__doc__ = """Filters the source with the predicate.
+
+    Arguments:
+    predicate  -- The predicate used for filtering
+    with_index -- False for the predicate to be called as predicate(item)
+                  True for it to be called as predicate(index, item)
+
+    Returns:
+    A Query instance with the source items filtered by the predicate.
+
+    Description:
+    This method returns a Query instance with the source items filtered
+    so that only items where predicate(item) is true are included.
+
+    If with_index=True is specified, only items where
+    predicate(index, item) is true are included. index is the zero-based
+    index of the item in source.
+
+    The order of the items is the same as that of the source.
+    Execution is deferred until the Query is iterated.
+    The items are streamed as they are iterated.
+    Exceptions raised by predicate are propagated.
+
+    Example:
+    >>> list(Query([1,2,3,4,5]).where(lambda x: x > 2))
+    [3, 4, 5]
+    """
 
 _empty = Query([])
 
