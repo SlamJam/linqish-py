@@ -471,6 +471,24 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
+    count.__doc__ = """Returns the number of items in source matching predicate.
+
+    Arguments:
+      predicate - Only items for which predicate(item) is true will be counted.
+                  If predicate is None all the items are counted.
+
+    Returns:
+      The number of items in source matching predicate or the number of items
+      if predicate is None.
+
+    Examples:
+      >>> Query([1, 2, 3, 4, 5]).count(lambda item: item > 2)
+      3
+
+      >>> Query([1, 2, 3, 4, 5]).count()
+      5
+    """
+
 Query.empty.__doc__ = """Returns an empty Query with no items."""
 
 Query.range.__doc__ = """Returns a Query which will yield count successive integers starting at start.
