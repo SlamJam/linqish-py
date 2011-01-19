@@ -18,6 +18,10 @@ def _consume(query):
     except StopIteration:
         pass
 
+class _RaisingIter(object):
+    def __iter__(self):
+        raise unittest.TestCase.failureException()
+
 class TestCase(unittest.TestCase):
     def assertIterEqual(self, iter1, iter2):
         self.assertSequenceEqual(list(iter1), list(iter2))
@@ -38,6 +42,10 @@ class Restriction(TestCase):
 
     def test_where_works_with_builtin_callables(self):
         self.assertIterEqual([1,2], Query([0,1,2]).where(abs))
+
+    def test_where_execution_deferred(self):
+        #No exception
+        Query(_RaisingIter()).where([1,2])
 
 class Projection(TestCase):
     def test_select(self):
