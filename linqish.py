@@ -112,22 +112,34 @@ class Query(object):
         if not callable(selector):
             raise TypeError('{!r}, the value of selector, is not callable.'.format(selector))
 
-        return Query(lambda: self._select(self._itersource(), selector, with_index))
-
-    def _select(self, iter_, selector, with_index):
         if not with_index:
-            return itertools.imap(selector, iter_)
+            return Query(lambda: itertools.imap(selector, self._itersource()))
         else:
-            return itertools.starmap(selector, enumerate(iter_))
+            return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x, with_index=False):
-        def apply_result_selector(item, collection):
-            return itertools.imap(functools.partial(resultSelector, item), collection)
+        return Query(lambda: self._selectmany(selector, resultSelector, with_index))
 
-        first, second = itertools.tee(self._itersource())
-        return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
-            apply_result_selector,
-            itertools.izip(first, self._select(second, selector, with_index)))))
+    def _selectmany(self, selector, resultSelector, with_index):
+        if not with_index:
+            for item in self._itersource():
+                for subitem in selector(item):
+                    yield resultSelector(item, subitem)
+        else:
+            for index, item in enumerate(self._itersource()):
+                for subitem in selector(index, item):
+                    yield resultSelector(item, subitem)
+
+    #Here is selectmany using itertools instead of a generator.
+    #It's much more complicated.
+    #def selectmany(self):
+    #    def apply_result_selector(item, collection):
+    #        return itertools.imap(functools.partial(resultSelector, item), collection)
+    #
+    #    first, second = itertools.tee(self._itersource())
+    #    return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
+    #        apply_result_selector,
+    #        itertools.izip(first, Query(second).select(selector, with_index)))))
 
     def take(self, count):
         if count < 0:
