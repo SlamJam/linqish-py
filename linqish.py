@@ -57,6 +57,10 @@ class Lookup(object):
 class Query(object):
 
     @staticmethod
+    def empty():
+        return _empty
+
+    @staticmethod
     def range(start, count):
         #The limit of this function is start+count<=sys.maxint.
         #This is different from .net which allows start+count-1<=sys.maxint.
@@ -73,10 +77,6 @@ class Query(object):
         if count < 0:
             raise ValueError('{!r}, the value of count, is negative.'.format(count))
         return Query(lambda: itertools.repeat(element, count))
-
-    @staticmethod
-    def empty():
-        return _empty
 
     def __init__(self, source, _sort_keys=()):
         if not (self._is_iterable_but_not_iterator(source) or callable(source)):
@@ -471,6 +471,8 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
+Query.empty.__doc__ = """Returns a Query with an empty source."""
+
 Query.range.__doc__ = """Returns a Query which will yield count successive integers starting at start.
 
     Arguments:
@@ -488,8 +490,6 @@ Query.range.__doc__ = """Returns a Query which will yield count successive integ
       >>> list(Query.range(1,5))
       [1, 2, 3, 4, 5]
     """
-
-Query.empty.__doc__ = """Returns a Query with an empty source."""
 
 Query.repeat.__doc__ = """Returns a Query that yields element count times.
 
