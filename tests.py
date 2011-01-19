@@ -43,7 +43,7 @@ class Restriction(TestCase):
     def test_where_works_with_builtin_callables(self):
         self.assertIterEqual([1,2], Query([0,1,2]).where(abs))
 
-    def test_where_execution_deferred(self):
+    def test_where_execution_is_deferred(self):
         #No exception
         Query(_RaisingIter()).where([1,2])
 
