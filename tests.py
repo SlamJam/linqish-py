@@ -192,6 +192,11 @@ class Join(TestCase):
             Query([1,2,3]).groupjoin([1,2,3], _mod2, _mod2, _pair))
 
 class Concatenation(TestCase):
+    def test_concat_other_is_noniterable(self):
+        self.assertRaisesRegexp(
+            TypeError, "0, the value of other, is not iterable\.",
+            lambda: Query([]).concat(0))
+
     def test_concat(self):
         self.assertIterEqual([1, 2, 3], Query([1]).concat([2,3]))
 

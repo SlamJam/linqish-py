@@ -188,6 +188,9 @@ class Query(object):
             yield resultSelector(item, others)
 
     def concat(self, other):
+        if not isinstance(other, collections.Iterable):
+            raise TypeError('{!r}, the value of other, is not iterable.'.format(other))
+
         return Query(lambda: itertools.chain(self._source, other))
 
     def orderby(self, keySelector):
