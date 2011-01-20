@@ -496,6 +496,10 @@ class Quantifiers(TestCase):
     def test_all_nonempty_source_and_predicate_false_once(self):
         self.assertFalse(Query([1,2,3]).all(lambda x: x != 3))
 
+    def test_all_returns_when_nonmatch_found(self):
+        #No exception
+        Query(_RaisingOnSecondIter()).all(lambda x: False)
+
     def test_all_only_iterates_until_predicate_is_false(self):
         def predicate(x):
             if x > 3:
