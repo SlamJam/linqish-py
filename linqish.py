@@ -557,6 +557,30 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
+    all.__doc__ = """Returns whether all elements match predicate
+
+    Arguments:
+      predicate -- Callable, accepting one argument, that items are matched
+                   against.
+
+    Returns:
+      True all elements match the predicate.
+      False if any element does not.
+
+    Raises:
+      TypeError if predicate is not callable.
+
+    Notes:
+      This method 'short-circuits'; it will iterate through elements in order
+      and return False immediately if an element doesn't match.
+
+    Examples:
+      >>> Query([1, 2, 3]).all(lambda x: x > 0)
+      True
+
+      >>> Query([1, 2, 3]).all(lambda x: x < 3)
+      False
+    """
 
     count.__doc__ = """Returns the number of items in source matching predicate.
 
