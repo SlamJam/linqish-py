@@ -457,6 +457,11 @@ class Generation(TestCase):
             lambda: Query.repeat('x', -1))
 
 class Quantifiers(TestCase):
+    def test_any_predicate_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of predicate, is not callable\.",
+            lambda: Query([]).any('foo'))
+
     def test_any_empty_source(self):
         self.assertFalse(Query([]).any(lambda x: True))
 
@@ -542,7 +547,7 @@ class Quantifiers(TestCase):
         self.assertTrue(container.contains_called)
 
 class Aggregation(TestCase):
-    def test_count_predicate_is_noncallable(self):
+    def test_count_predicate_is_neither_None_or_noncallable(self):
         self.assertRaisesRegexp(
             TypeError, "'foo', the value of predicate, is neither None nor callable\.",
             lambda: Query([1,2,3]).count('foo'))

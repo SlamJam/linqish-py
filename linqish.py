@@ -380,6 +380,9 @@ class Query(object):
             return iter([default])
 
     def any(self, predicate=lambda x: True):
+        if not callable(predicate):
+            raise TypeError("{!r}, the value of predicate, is not callable.".format(predicate))
+
         return any(itertools.imap(predicate, self._itersource()))
 
     def all(self, predicate):
