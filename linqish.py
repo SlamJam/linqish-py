@@ -574,8 +574,9 @@ class Query(object):
       TypeError if predicate is not callable.
 
     Notes:
-      This method 'short-circuits'; it will iterate through elements in order
-      and return False immediately if an element doesn't match.
+      If the instance has no elements, all returns True.
+      This method 'short-circuits'; it will iterate through elements and return
+      False immediately if an element doesn't match.
 
     Examples:
       >>> Query([1, 2, 3]).all(lambda x: x > 0)
