@@ -383,6 +383,9 @@ class Query(object):
         return any(itertools.imap(predicate, self._itersource()))
 
     def all(self, predicate):
+        if not callable(predicate):
+            raise TypeError("{!r}, the value of predicate, is not callable.".format(predicate))
+
         return all(itertools.imap(predicate, self._itersource()))
 
     def contains(self, value, key=None):

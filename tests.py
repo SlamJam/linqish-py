@@ -482,6 +482,11 @@ class Quantifiers(TestCase):
             return x == 3
         self.assertTrue(Query([1,2,3,4]).any(predicate))
 
+    def test_all_predicate_is_noncallable(self):
+        self.assertRaisesRegexp(
+            TypeError, "'foo', the value of predicate, is not callable\.",
+            lambda: Query([]).all('foo'))
+
     def test_all_empty_source(self):
         self.assertTrue(Query([]).all(lambda x: False))
 
