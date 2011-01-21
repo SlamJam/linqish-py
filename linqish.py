@@ -580,6 +580,27 @@ class Query(object):
      [-2, -1, 0]
     """
 
+    union.__doc__ = """Returns a Query that yields the union of source and other
+
+    Arguments:
+      other -- Iterable with which the iterm of Query will be unioned
+      key   -- Callable, that accepts one arg, which returns a value used to compare
+               items.
+
+    Returns:
+      A Query yielding the distinct items of source unioned with the items of
+      other. Items are considered distinct if they produce different values
+      when key is applied to them. If more than one item has the same key
+      value, the first is kept and the rest are dropped.
+
+    Examples:
+      >>> list(Query([1, 1, 2]).union([3]))
+      [1, 2, 3]
+
+      >>> list(Query([-2, -1, 0]).union([0, 1, 2], key=abs))
+      [-2, -1, 0]
+    """
+
     first.__doc__ = """Returns the first element matching predicate
 
     Arguments:
