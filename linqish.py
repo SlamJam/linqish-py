@@ -596,6 +596,30 @@ class Query(object):
       'No matches'
     """
 
+    single.__doc__ = """Returns the only element to matching predicate
+
+    Arguments:
+      predicate -- Callable, accepting one argument, that items are matched
+                   against
+      default   -- The value to return if no matching element is found
+
+    Returns:
+      The only element that matches predicate or, if no match is found,
+      default or, if more than one match is found, raises LookUpError.
+
+    Examples:
+      >>> Query([1, 2, 3]).single(lambda x: 2 * x == 4)
+      2
+
+      >>> Query([1, 2, 3]).single(lambda x: x < 0, 'No matches')
+      'No matches'
+
+      >>> # Query([1, 2, 3]).single(lambda x: x > 0)
+      Traceback (most recent call last):
+      ...
+      LookupError: More than one item found.
+    """
+
     all.__doc__ = """Returns whether all elements match predicate
 
     Arguments:
