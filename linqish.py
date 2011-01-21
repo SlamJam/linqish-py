@@ -560,6 +560,26 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
+    distinct.__doc__ = """Returns a Query containing the distinct items of source.
+
+    Arguments:
+      key -- Callable, that accepts one arg, which returns a value used to compare
+             items.
+
+    Returns:
+      A Query containing the distinct items of source. Items are considered
+      distinct if they produce different values when key is applied to them.
+      If two items have the same key value, the first is kept and the second is
+      dropped.
+
+    Examples:
+     >>> list(Query([1, 1, 2, 3]).distinct())
+     [1, 2, 3]
+
+     >>> list(Query([-2, -1, 0, 1, 2]).distinct(abs))
+     [-2, -1, 0]
+    """
+
     first.__doc__ = """Returns the first element matching predicate
 
     Arguments:
