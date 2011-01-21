@@ -577,6 +577,25 @@ class Query(object):
       >>> Query([1, 2, 3]).first(lambda x: x > 5, 'No matches')
       'No matches'
     """
+
+    last.__doc__ = """Returns the last element matching predicate
+
+    Arguments:
+      predicate -- Callable, accepting one argument, that items are matched
+                   against.
+      default   -- The value to return if no matching element is found.
+
+    Returns:
+      The last item that matches predicate or, if no match is found, default.
+
+    Examples:
+      >>> Query([1, 2, 3]).last(lambda x: 2 * x < 5)
+      2
+
+      >>> Query([1, 2, 3]).first(lambda x: x > 5, 'No matches')
+      'No matches'
+    """
+
     all.__doc__ = """Returns whether all elements match predicate
 
     Arguments:
