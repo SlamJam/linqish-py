@@ -567,7 +567,7 @@ class Query(object):
                    against.
 
     Returns:
-      True all elements match the predicate.
+      True if all elements match the predicate.
       False if any element does not.
 
     Raises:
