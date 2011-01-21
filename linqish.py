@@ -586,6 +586,26 @@ class Query(object):
       False
     """
 
+    any.__doc__ = """Returns whether any elements match predicate
+
+    Arguments:
+      predicate -- Callable, accepting one argument, that items are matched
+                   against.
+
+    Returns:
+      True if any element matches the predicate.
+      False if none of them do.
+
+    Notes:
+      If the instance has no elements, any returns False.
+      This method 'short-circuits'; it will iterate through elements and return
+      True immediately if an element matches.
+
+    Examples:
+      >>> Query([1, 2, 3]).any(lambda x: x == 3)
+      True
+    """
+
     count.__doc__ = """Returns the number of items in source matching predicate.
 
     Arguments:
