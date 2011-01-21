@@ -705,6 +705,30 @@ class Query(object):
       5
     """
 
+    aggregate.__doc__ = """Applies an accumulator function to items.
+
+    Arguments:
+      seed           -- The initial value
+      func           -- The accumulator - callable, accepting two arguments
+      resultSelector -- Callable, accepting one argument, that is applied to
+                        the result of the accumulator
+
+    Returns:
+      Beginning the seed and first element, func is applied to the result of
+      it's last call and the next element until the elements run out. The
+      resultSelector is then run on the output and returned.
+
+    Examples:
+      >>> Query(['a', 'b', 'c', 'd']).aggregate(
+      ...     'x',
+      ...     lambda acc, item: '(' + acc + '+' + item + ')',
+      ...     lambda output: output.upper())
+      '((((X+A)+B)+C)+D)'
+
+      >>> Query([1, 2, 3]).aggregate(0, lambda acc, item: acc + item)
+      6
+    """
+
 Query.empty.__doc__ = """Returns an empty Query with no items."""
 
 Query.range.__doc__ = """Returns a Query which will yield count successive integers starting at start.
