@@ -569,8 +569,8 @@ class Query(object):
     Returns:
       A Query containing the distinct items of source. Items are considered
       distinct if they produce different values when key is applied to them.
-      If two items have the same key value, the first is kept and the second is
-      dropped.
+      If more than one item has the same key value, the first is kept and the
+      rest are dropped.
 
     Examples:
      >>> list(Query([1, 1, 2, 3]).distinct())
