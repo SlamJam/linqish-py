@@ -560,6 +560,23 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
+    first.__doc__ = """Returns the first element matching predicate
+
+    Arguments:
+      predicate -- Callable, accepting one argument, that items are matched
+                   against.
+      default   -- The value to return if no matching element is found.
+
+    Returns:
+      The first item that matches predicate or, if no match is found, default.
+
+    Examples:
+      >>> Query([1, 2, 3]).first(lambda x: 2 * x > 5)
+      3
+
+      >>> Query([1, 2, 3]).first(lambda x: x > 5, 'No matches')
+      'No matches'
+    """
     all.__doc__ = """Returns whether all elements match predicate
 
     Arguments:
