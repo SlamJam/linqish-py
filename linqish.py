@@ -343,7 +343,7 @@ class Query(object):
 
     def _at_overrange_error(self, index):
         return ValueError('{!r}, the value of index, is greater than the number of elements.'.format(index))
-        
+
     def at(self, index, default=_missing):
         if type(index) is not int:
             raise TypeError('{!r}, the value of index, is not an int.'.format(index))
@@ -618,6 +618,24 @@ class Query(object):
       Traceback (most recent call last):
       ...
       LookupError: More than one item found.
+    """
+
+    ifempty = """If empty returns a Query containing default
+
+    Arguments:
+      default -- the value the returned Query will contains if there are no
+                 items
+
+    Returns:
+      If there are no items, an instance containing default as the only item
+      is returned, otherwise a new instance with the same items is returned.
+
+    Examples:
+      >>> list(Query([l, 2, 3]).ifempty('No items'))
+      [1, 2, 3]
+
+      >>> list(Query([]).ifempty('No items'))
+      ['No items']
     """
 
     all.__doc__ = """Returns whether all elements match predicate
