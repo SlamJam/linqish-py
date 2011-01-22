@@ -601,6 +601,28 @@ class Query(object):
       [-2, -1, 0]
     """
 
+    intersection.__doc__ = """Returns a Query that yields the intersection of source and other
+
+    Arguments:
+      other -- Iterable with which the items of Query will be intersected.
+      key   -- Callable, that accepts one arg, which returns a value used to
+               compare items.
+
+    Returns:
+      A Query that yields the distinct items of other that are equal to any
+      item in source. Items are considered distinct if they produce different
+      values when key is applied to them and are equal produce the same value.
+      If more than one item in other has the same key value, the first one in
+      is kept and the rest are dropped.
+
+    Examples:
+      >>> list(Query([1, 2, 3]).intersection([1]))
+      [1]
+
+      >>> list(Query([-3, -2, -1]).intersection([0, 1], key=abs))
+      [1]
+    """
+
     first.__doc__ = """Returns the first element matching predicate
 
     Arguments:
