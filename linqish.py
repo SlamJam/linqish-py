@@ -627,7 +627,7 @@ class Query(object):
 
     Arguments:
       other -- Iterable whose items are excluded from the result
-      key   -- Callable, that accepts one arg, which result a value used to
+      key   -- Callable, that accepts one arg, which returns a value used to
                compare items.
 
     Returns:
@@ -643,7 +643,26 @@ class Query(object):
 
       >>> list(Query([-1, 0, 1]).except_([0, 1], key=abs))
       []
-     """
+    """
+
+    tolookup.__doc__ = """Returns a Lookup instance containing the source items grouped by key.
+
+    Arguments:
+      key -- Callable, that accepts arg, which returns a value used to
+             group items.
+
+    Returns:
+      A Lookup instance containing the source items grouped by key
+
+    Examples:
+      >>> lookup = Query([-2, -1, 0, 1, 2]).tolookup(abs)
+      >>> list(lookup[0])
+      [0]
+      >>> list(lookup[1])
+      [-1, 1]
+      >>> list(lookup[2])
+      [-2, 2]
+    """
 
     first.__doc__ = """Returns the first element matching predicate
 
