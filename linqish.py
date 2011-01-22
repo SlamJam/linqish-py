@@ -611,9 +611,9 @@ class Query(object):
     Returns:
       A Query that yields the distinct items of other that are equal to any
       item in source. Items are considered distinct if they produce different
-      values when key is applied to them and are equal produce the same value.
-      If more than one item in other has the same key value, the first one in
-      is kept and the rest are dropped.
+      values when key is applied to them and are equal if they produce the
+      same value. If more than one item in other has the same key value, the
+      first one in is kept and the rest are dropped.
 
     Examples:
       >>> list(Query([1, 2, 3]).intersection([1]))
@@ -622,6 +622,28 @@ class Query(object):
       >>> list(Query([-3, -2, -1]).intersection([0, 1], key=abs))
       [1]
     """
+
+    except_.__doc__ = """Returns a Query that yields the items of source that aren't in other
+
+    Arguments:
+      other -- Iterable whose items are excluded from the result
+      key   -- Callable, that accepts one arg, which result a value used to
+               compare items.
+
+    Returns:
+      A Query that yields the distinct items of source that aren't equal to
+      any item in other. Items are considered distinct if they produce different
+      values when key is applied to them and are equal if they produce the same
+      value. If more than one item in other has the same key value, the first
+      one in is kept and the rest are dropped.
+
+    Examples:
+      >>> list(Query([1, 2, 2, 3]).except_([1]))
+      [2, 3]
+
+      >>> list(Query([-1, 0, 1]).except_([0, 1], key=abs))
+      []
+     """
 
     first.__doc__ = """Returns the first element matching predicate
 
