@@ -274,6 +274,7 @@ class Conversion(TestCase):
         self.assertIterEqual([0], result[0])
 
     def test_tolookup_iter(self):
+        #Note that order is based on the order of the source
         result = iter(Query([-2,-1,0,1,2]).tolookup(abs, lambda x: 2*x))
         grouping = next(result)
         self.assertEqual(2, grouping.key)
