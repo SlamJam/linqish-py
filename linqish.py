@@ -560,6 +560,52 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
+    groupby.__doc__ = """Returns a Query that yields the processed items grouped by key.
+
+    Arguments:
+      key             -- Callable, accepting one arg, using for grouping.
+      elementSelector -- Callable, accepting one arg, applied to items to
+                         provide the values that are grouped.
+      resultSelector  -- Callable, accepting a key value and an iterable of
+                         items grouped that key, used to produce the final
+                         result.
+
+    Returns:
+      A Query object yielding the results of resultSelector applied to each
+      group of source items grouped by key. The results are unordered.
+
+    Examples:
+      >>> groups = list(Query('The Cat in the Hat'.split()).groupby(len))
+      >>> first_group, second_group = groups[0], groups[1]
+      >>> if first_group.key > second_group.key:
+      ...     first_group, second_group = second_group, first_group
+      >>> first_group.key, list(first_group)
+      (2, ['in'])
+      >>> second_group.key, list(second_group)
+      (3, ['The', 'Cat', 'the', 'Hat'])
+
+      >>> groups = list(Query('The Cat in the Hat'.split())
+      ...     .groupby(len, elementSelector=str.upper))
+      >>> first_group, second_group = groups[0], groups[1]
+      >>> if first_group.key > second_group.key:
+      ...     first_group, second_group = second_group, first_group
+      >>> first_group.key, list(first_group)
+      (2, ['IN'])
+      >>> second_group.key, list(second_group)
+      (3, ['THE', 'CAT', 'THE', 'HAT'])
+
+      >>> group_mins = list(Query('The Cat in the Hat'.split())
+      ...     .groupby(len, elementSelector=str.upper,
+      ...              resultSelector=lambda key, items: min(items)))
+      >>> first_min, second_min = group_mins[0], group_mins[1]
+      >>> if len(first_min) > len(second_min):
+      ...     first_min, second_min = second_min, first_min
+      >>> first_min
+      'IN'
+      >>> second_min
+      'CAT'
+     """
+
     distinct.__doc__ = """Returns a Query containing the distinct items of source.
 
     Arguments:
