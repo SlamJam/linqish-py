@@ -279,7 +279,7 @@ class Query(object):
                 yielded_keys.add(item_key)
 
     def tolist(self):
-        return list(self._source)
+        return list(self._itersource())
 
     def todict(self, keySelector, elementSelector=lambda x: x):
         result = dict()
