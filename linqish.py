@@ -571,6 +571,23 @@ class Query(object):
       [1, 2, 3]
     """
 
+    skip.__doc__ = """Returns a Query that yields source items after skipping count.
+
+    Arguments:
+      count -- the number of items to skip
+
+    Returns:
+      Query that yields the source items after skipping count of them. If source
+      has less than count items, the Query is empty.
+
+    Example:
+      >>> list(Query([1, 2, 3]).skip(2))
+      [3]
+
+      >>> list(Query([1, 2, 3]).skip(5))
+      []
+    """
+
     join.__doc__ = """Performs a one-to-one join to other.
 
       Arguments:
