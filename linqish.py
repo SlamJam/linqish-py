@@ -589,6 +589,36 @@ class Query(object):
         [(2, 2), (1, 1), (1, 4), (0, 0), (0, 3)]
     """
 
+    groupjoin.__doc__ = """Preforms a one-to-many join to other.
+
+        Arguments:
+            other            -- Iterable that source is joined to.
+            keySelector      -- Callable, accepting one arg, used to get key
+                                values for source items
+            otherKeySelector -- Callable, accepting one arg, used to get key
+                                values for other items
+            resultSelector   -- Callable, accepting two args, used to combine
+                                joined source item and other collection pairs
+
+        Returns:
+          Query yielding the join pairs of source items and matching other items
+          combined using resultSelector. The items are matched by keySelector
+          and otherKeySelector. This is a one-to-many a single item in source
+          will be paired with multiple matching itmes.
+
+          The order of results preserves the source item ordering and the other
+          item collections preverse the ordering in other.
+
+        Examples:
+          >>> import string
+          >>> list(Query([1, 2, 3, 4, 5]).groupjoin(
+          ...     'The War of the Worlds'.split(),
+          ...     lambda item: item,
+          ...     len,
+          ...     lambda item, other_items: (item, list(other_items))))
+          [(1, []), (2, ['of']), (3, ['The', 'War', 'the']), (4, []), (5, [])]
+    """
+
     concat.__doc__ =  """Returns a Query containing the concatenation of source and other.
 
     Arguments:
