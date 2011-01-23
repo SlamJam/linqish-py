@@ -554,6 +554,23 @@ class Query(object):
       [0, 1, 1, 2, 2, 3]
     """
 
+    take.__doc__ = """Returns a Query that only yields the first count items of source.
+
+    Arguments:
+      count -- the number of items to yield
+
+    Returns:
+      Query that yields the first count items of source. If source has less than
+      count items, it yields them all.
+
+    Example:
+      >>> list(Query([1, 2, 3]).take(2))
+      [1, 2]
+
+      >>> list(Query([1, 2, 3]).take(5))
+      [1, 2, 3]
+    """
+
     join.__doc__ = """Performs a one-to-one join to other.
 
       Arguments:
