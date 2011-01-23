@@ -734,6 +734,13 @@ class Query(object):
       []
     """
 
+    tolist.__doc__ = """Returns a list containing souce items.
+
+    Examples:
+      >>> Query('abc').tolist()
+      ['a', 'b', 'c']
+    """
+
     tolookup.__doc__ = """Returns a Lookup instance containing the source items grouped by key.
 
     Arguments:
