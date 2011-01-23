@@ -259,6 +259,9 @@ class Conversion(TestCase):
     def test_tolist(self):
         self.assertEqual([1,2,3], Query([1,2,3]).tolist())
 
+    def test_tolist_works_with_func_source(self):
+        self.assertEqual([1,2,3], Query(lambda: [1,2,3]).tolist())
+
     def test_todict(self):
         self.assertEqual({1:'A',2:'AB',3:'ABC'}, Query(['a','ab','abc']).todict(len,str.upper))
 
