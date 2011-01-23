@@ -790,7 +790,7 @@ class Query(object):
       is returned, otherwise a new instance with the same items is returned.
 
     Examples:
-      >>> list(Query([l, 2, 3]).ifempty('No items'))
+      >>> list(Query([1, 2, 3]).ifempty('No items'))
       [1, 2, 3]
 
       >>> list(Query([]).ifempty('No items'))
