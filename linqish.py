@@ -555,6 +555,7 @@ class Query(object):
     """
 
     join.__doc__ = """Performs a one-to-one join to other.
+
       Arguments:
         other            -- Iterable that source is joined to.
         keySelector      -- Callable, accepting one arg, used to get key
