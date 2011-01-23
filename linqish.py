@@ -8,6 +8,13 @@ import operator
 _missing = object()
 _Tally = collections.namedtuple('Tally', ['sum', 'count'])
 
+class _IterFuncWrapper(object):
+    def __init__(self, func):
+        self._func = func
+
+    def __iter__(self):
+        return iter(self._func())
+
 @functools.total_ordering
 class _ReverseKey(object):
     def __init__(self, key):
@@ -82,28 +89,30 @@ class Query(object):
         if not (self._is_iterable_but_not_iterator(source) or callable(source)):
             raise TypeError(('{!r}, value of source, must be iterable but not an iterator or a callable returning ' +
                              'an iterator.').format(source))
-        self._source = source
+        self._source = self._iterable(source)
         self._sort_keys = _sort_keys
 
     def __iter__(self):
-        result = self._itersource()
+        result = self._source
         if self._sort_keys:
             #TODO: is it necessary to call iter(...)?
-            result = iter(sorted(result, key=lambda x: list(map(lambda y: y(x), self._sort_keys))))
-        return result
+            result = sorted(result, key=lambda x: list(map(lambda y: y(x), self._sort_keys)))
+        return iter(result)
 
     def _is_iterable_but_not_iterator(self, instance):
         return isinstance(instance, collections.Iterable) and not isinstance(instance, collections.Iterator)
 
-    def _itersource(self):
-        return callable(self._source) and self._source() or iter(self._source)
+    def _iterable(self, source):
+        if isinstance(source, collections.Iterable):
+            return source
+        return _IterFuncWrapper(source)
 
     def where(self, predicate, with_index=False):
         if not callable(predicate):
             raise TypeError('{!r}, the value of predicate, is not callable.'.format(predicate))
 
         if not with_index:
-            return Query(lambda: itertools.ifilter(predicate, self._itersource()))
+            return Query(lambda: itertools.ifilter(predicate, self._source))
         else:
             first, second = itertools.tee(self._source)
             return Query(lambda: itertools.compress(first, itertools.starmap(predicate, enumerate(second))))
@@ -113,9 +122,9 @@ class Query(object):
             raise TypeError('{!r}, the value of selector, is not callable.'.format(selector))
 
         if not with_index:
-            return Query(lambda: itertools.imap(selector, self._itersource()))
+            return Query(lambda: itertools.imap(selector, self._source))
         else:
-            return Query(lambda: itertools.starmap(selector, enumerate(self._itersource())))
+            return Query(lambda: itertools.starmap(selector, enumerate(self._source)))
 
     def selectmany(self, selector, resultSelector=lambda i, x: x, with_index=False):
         if not callable(selector):
@@ -127,11 +136,11 @@ class Query(object):
 
     def _selectmany(self, selector, resultSelector, with_index):
         if not with_index:
-            for item in self._itersource():
+            for item in self._source:
                 for subitem in selector(item):
                     yield resultSelector(item, subitem)
         else:
-            for index, item in enumerate(self._itersource()):
+            for index, item in enumerate(self._source):
                 for subitem in selector(index, item):
                     yield resultSelector(item, subitem)
 
@@ -141,7 +150,7 @@ class Query(object):
     #    def apply_result_selector(item, collection):
     #        return itertools.imap(functools.partial(resultSelector, item), collection)
     #
-    #    first, second = itertools.tee(self._itersource())
+    #    first, second = itertools.tee(self._source)
     #    return Query(lambda: itertools.chain.from_iterable(itertools.starmap(
     #        apply_result_selector,
     #        itertools.izip(first, Query(second).select(selector, with_index)))))
@@ -158,7 +167,7 @@ class Query(object):
 
     def takewhile(self, predicate, with_index=False):
         if not with_index:
-            return Query(lambda: itertools.takewhile(predicate, self._itersource()))
+            return Query(lambda: itertools.takewhile(predicate, self._source))
         else:
             return Query(lambda: itertools.imap(
                 operator.itemgetter(1),
@@ -166,7 +175,7 @@ class Query(object):
 
     def skipwhile(self, predicate, with_index=False):
         if not with_index:
-            return Query(lambda: itertools.dropwhile(predicate, self._itersource()))
+            return Query(lambda: itertools.dropwhile(predicate, self._source))
         else:
             return Query(lambda: itertools.imap(
                 operator.itemgetter(1),
@@ -279,7 +288,7 @@ class Query(object):
                 yielded_keys.add(item_key)
 
     def tolist(self):
-        return list(self._itersource())
+        return list(self._source)
 
     def todict(self, keySelector, elementSelector=lambda x: x):
         result = dict()
@@ -301,11 +310,11 @@ class Query(object):
             raise TypeError('{!r}, the value of other, is not iterable.'.format(other))
         return all(itertools.imap(
             lambda x: x[0] is not _missing and x[1] is not _missing and key(x[0]) == key(x[1]),
-            itertools.izip_longest(self._itersource(), other, fillvalue=_missing)))
+            itertools.izip_longest(self._source, other, fillvalue=_missing)))
 
     def first(self, predicate=lambda x:True, default=_missing):
         try:
-            result = next(itertools.ifilter(predicate, self._itersource()))
+            result = next(itertools.ifilter(predicate, self._source))
         except StopIteration:
             if default is _missing:
                 raise LookupError()
@@ -315,7 +324,7 @@ class Query(object):
 
     def last(self, predicate=lambda x:True, default=_missing):
         last = _missing
-        for item in itertools.ifilter(predicate, self._itersource()):
+        for item in itertools.ifilter(predicate, self._source):
             last = item
         if last is _missing:
             if default is _missing:
@@ -325,7 +334,7 @@ class Query(object):
         return last
 
     def single(self, predicate=lambda x:True, default=_missing):
-        iter_ = itertools.ifilter(predicate, self._itersource())
+        iter_ = itertools.ifilter(predicate, self._source)
         try:
             result = next(iter_)
         except StopIteration:
@@ -362,7 +371,7 @@ class Query(object):
             return self._source[index]
 
         try:
-            return next(itertools.islice(self._itersource(), index, None))
+            return next(itertools.islice(self._source, index, None))
         except StopIteration:
             if default is not _missing:
                 return default
@@ -372,10 +381,10 @@ class Query(object):
         return Query(lambda: self._ifempty(default))
 
     def _ifempty(self, default):
-        iter_ = self._itersource()
+        iter_ = iter(self._source)
         try:
             next(iter_)
-            return self._itersource()
+            return self._source
         except StopIteration:
             return iter([default])
 
@@ -383,20 +392,20 @@ class Query(object):
         if not callable(predicate):
             raise TypeError("{!r}, the value of predicate, is not callable.".format(predicate))
 
-        return any(itertools.imap(predicate, self._itersource()))
+        return any(itertools.imap(predicate, self._source))
 
     def all(self, predicate):
         if not callable(predicate):
             raise TypeError("{!r}, the value of predicate, is not callable.".format(predicate))
 
-        return all(itertools.imap(predicate, self._itersource()))
+        return all(itertools.imap(predicate, self._source))
 
     def contains(self, value, key=None):
         if key is None:
             if isinstance(self._source, collections.Container):
                 return value in self._source
-            return value in self._itersource()
-        return value in itertools.imap(key, self._itersource())
+            return value in self._source
+        return value in itertools.imap(key, self._source)
 
     def count(self, predicate=None):
         if predicate is not None and not callable(predicate):
@@ -405,20 +414,20 @@ class Query(object):
         if predicate is None and isinstance(self._source, collections.Sized):
             return len(self._source)
         predicate = predicate or (lambda x: True)
-        return reduce(lambda x,y: x + 1, itertools.ifilter(predicate, self._itersource()), 0)
+        return reduce(lambda x,y: x + 1, itertools.ifilter(predicate, self._source), 0)
 
     def sum(self, selector=lambda x: x):
-        return sum(itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._itersource())))
+        return sum(itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._source)))
 
     def min(self, selector=lambda x: x):
-        return min(itertools.imap(selector, self._itersource()))
+        return min(itertools.imap(selector, self._source))
 
     def max(self, selector=lambda x: x):
-        return max(itertools.imap(selector, self._itersource()))
+        return max(itertools.imap(selector, self._source))
 
     def average(self, selector=lambda x: x):
         tally = reduce(lambda x,y: _Tally(x.sum + y, x.count + 1),
-                       itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._itersource())),
+                       itertools.imap(selector, itertools.ifilter(lambda x: x is not None, self._source)),
                        _Tally(0,0))
         if not tally.count:
             return None
@@ -428,7 +437,7 @@ class Query(object):
         return tally.sum / tally.count
 
     def aggregate(self, seed, func, resultSelector=lambda x:x):
-        return resultSelector(reduce(func, self._itersource(), seed))
+        return resultSelector(reduce(func, self._source, seed))
 
     where.__doc__ = """Filters the source using the predicate.
 
