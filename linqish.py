@@ -552,7 +552,41 @@ class Query(object):
       ...     lambda index, item: range(index, item + 1),
       ...     with_index=True))
       [0, 1, 1, 2, 2, 3]
-   """
+    """
+
+    join.__doc__ = """Joins source to other.
+      Arguments:
+        other            -- Iterable that source is joined to.
+        keySelector      -- Callable, accepting one arg, used to get key
+                            values for source items
+        otherKeySelector -- Callable, accepting one arg, used to get key
+                            values for other items
+        resultSelector   -- Callable, accepting two args, used to combine
+                            joined item pairs
+
+      Returns:
+        Query yielding the joined item pairs of source and other combined
+        using resultSelector. An item in source is matched to an item
+        in other if keySelector(source_item) == otherKeySelector(other_item).
+        The items are ordered by source item and then other item using
+        the orderings ordering of source and other.
+
+      Examples:
+        >>> import string
+        >>> list(Query(string.ascii_lowercase).join(
+        ...     'The War of the Worlds'.split(),
+        ...     lambda item: item.upper(),
+        ...     lambda other_item: other_item[0].upper(),
+        ...     lambda item, other_item: (item, other_item)))
+        [('o', 'of'), ('t', 'The'), ('t', 'the'), ('w', 'War'), ('w', 'Worlds')]
+
+        >>> list(Query([2, 1, 0]).join(
+        ...     range(0, 5),
+        ...     lambda item: item,
+        ...     lambda other_item: other_item % 3,
+        ...     lambda item, other_item: (item, other_item)))
+        [(2, 2), (1, 1), (1, 4), (0, 0), (0, 3)]
+    """
 
     concat.__doc__ =  """Returns a Query containing the concatenation of source and other.
 
