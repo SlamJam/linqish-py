@@ -588,6 +588,28 @@ class Query(object):
       []
     """
 
+    takewhile.__doc__ = """Returns a Query that yields items while predicate is true.
+
+    Arguments:
+      predicate  -- Callable, accepting one or two items depending on
+                    with_index, used to filter items
+      with_index -- True for predicate to be called as predicate(item)
+                    False for predicate to be called as predicate(index, item)
+                    where index is the zero based index of item in source
+
+    Returns:
+      Queryable which yields items until predicate(item) evaluates to false.
+
+    Example:
+      >>> list(Query('ABc').takewhile(lambda item: item.isupper()))
+      ['A', 'B']
+
+      >>> list(Query([1, 2, 4, 8])
+      ...     .takewhile(lambda index, item: item - 1 <= index,
+      ...                with_index=True))
+      [1, 2]
+    """
+
     join.__doc__ = """Performs a one-to-one join to other.
 
       Arguments:
