@@ -770,7 +770,7 @@ class Query(object):
       LookupError: More than one item found.
     """
 
-    ifempty = """If empty returns a Query containing default
+    ifempty.__doc__ = """If empty returns a Query containing default
 
     Arguments:
       default -- the value the returned Query will contains if there are no
