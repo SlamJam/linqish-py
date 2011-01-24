@@ -713,6 +713,20 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
+    orderby.__doc__ = """Returns an OrderedQuery yielding source items ordered by key.
+
+    Arguments:
+      key -- Callable, accepting one arg, used to order the items
+
+    Returns:
+      OrderedQuery yielding source items order by key. The sorting algorithm is
+      stable so items with equal key values retain their relative order.
+
+    Examples:
+      >>> list(Query([-2, -1, 0, 1, 2]).orderby(abs))
+      [0, -1, 1, -2, 2]
+    """
+
     groupby.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
     Arguments:
