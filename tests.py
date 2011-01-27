@@ -131,8 +131,8 @@ class Projection(TestCase):
     def test_select_can_be_reiterated_with_the_same_results(self):
         #Assumes that iterator/selector are free of side effects.
         query = Query([1,2,3]).select(abs)
-        self.AssertIterEqual([1,2,3], query)
-        self.AssertIterEqual([1,2,3], query)
+        self.assertIterEqual([1,2,3], query)
+        self.assertIterEqual([1,2,3], query)
 
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
