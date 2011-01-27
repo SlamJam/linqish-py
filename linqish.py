@@ -719,13 +719,28 @@ class Query(object):
       key -- Callable, accepting one arg, used to order the items
 
     Returns:
-      OrderedQuery yielding source items order by key. The sorting algorithm is
+      OrderedQuery yielding source items ordered by key. The sorting algorithm is
       stable so items with equal key values retain their relative order.
 
     Examples:
       >>> list(Query([-2, -1, 0, 1, 2]).orderby(abs))
       [0, -1, 1, -2, 2]
     """
+
+    orderbydesc.__doc__ = """Returns an OrderedQuery yielding source items in descending order by key.
+
+    Arguments:
+      key -- Callable, accepting one arg, used to order the items
+
+    Returns:
+      OrderedQuery yielding source items in descending order by key. The sorting algorithm is
+      stable so items with equal key values retain their relative order.
+
+    Examples:
+      >>> list(Query([-2, -1, 0, 1, 2]).orderbydesc(abs))
+      [-2, 2, -1, 1, 0]
+    """
+
 
     groupby.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
