@@ -55,6 +55,29 @@ class TestCase(unittest.TestCase):
             Exception, 'Test',
             lambda: list(Query([1, 2, 3]).select(raiser)))
 
+    def test_select_execution_is_deferred(self):
+        def raiser(x):
+            raise Exception('Test')
+        #No exception
+        Query([1,2,3]).select(raiser)
+
+    def test_select_execution_is_streamed(self):
+        def selector(x):
+            if x == 3:
+                raise unittest.TestCase.failureException()
+            return x
+
+        #No exception, because selector(3) is never called
+        iter_ = iter(Query([1,2,3]).select(selector))
+        next(iter_)
+        next(iter_)
+
+    def test_select_can_be_reiterated_with_the_same_results(self):
+        #Assumes that iterator/selector are free of side effects.
+        query = Query([1,2,3]).select(abs)
+        self.AssertIterEqual([1,2,3], query)
+        self.AssertIterEqual([1,2,3], query)
+
     def test_selectmany(self):
         self.assertIterEqual([1,2,3,4], Query([(1,2), (3,4)]).selectmany(lambda x: x))
 
