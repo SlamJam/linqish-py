@@ -1159,6 +1159,22 @@ Query.max.__func__.__doc__ = """Returns the maximum of the values of selector(it
       6
 """
 
+Query.average.__func__.__doc__ = """Returns the average of the values of selector(item)
+
+    Arguments:
+      selector -- Callable, accepting one arg, that is applied to source items
+                  to supply the values which are averaged.
+
+    Returns:
+      The average of the values generating by applying selector to the source
+      items.
+
+    Examples:
+      >>> Query('The War of the Worlds'.split()).average(len)
+      3.4
+      >>> # (3 + 3 + 2 + 3 + 6)/5 = 3.4
+"""
+
 Query.aggregate.__func__.__doc__ = """Applies an accumulator function to items.
 
     Arguments:
