@@ -545,7 +545,7 @@ class Quantifiers(TestCase):
         self.assertFalse(Query([1,2,3]).contains(5))
 
     def test_contains_with_key_and_match(self):
-        self.assertTrue(Query([1,2,3]).contains(9, lambda x: x**2))
+        self.assertTrue(Query([1,2,3]).contains(-3, lambda x: x**2))
 
     def test_contains_with_key_and_no_match(self):
         self.assertFalse(Query([1,2,3]).contains(25, lambda x: x**2))
