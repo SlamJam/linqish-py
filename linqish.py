@@ -405,7 +405,7 @@ class Query(object):
             if isinstance(self._source, collections.Container):
                 return value in self._source
             return value in self._source
-        return value in itertools.imap(key, self._source)
+        return key(value) in itertools.imap(key, self._source)
 
     def count(self, predicate=None):
         if predicate is not None and not callable(predicate):
