@@ -439,7 +439,17 @@ class Query(object):
     def aggregate(self, seed, func, resultSelector=lambda x:x):
         return resultSelector(reduce(func, self._source, seed))
 
-    where.__doc__ = """Filters the source using the predicate.
+
+_empty = Query([])
+
+class OrderedQuery(Query):
+    def thenby(self, keySelector):
+        return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
+
+    def thenbydesc(self, keySelector):
+        return self.thenby(lambda x: _ReverseKey(keySelector(x)))
+
+Query.where.__func__.__doc__ = """Filters the source using the predicate.
 
     Arguments:
       predicate  -- The predicate used for filtering
@@ -474,7 +484,7 @@ class Query(object):
       [1, 3, 4, 5]
     """
 
-    select.__doc__ = """Projects the source using the selector.
+Query.select.__func__.__doc__ = """Projects the source using the selector.
 
     Arguments:
       selector   -- The selector used for projection
@@ -509,7 +519,7 @@ class Query(object):
       [0, 2, 6, 12, 20]
     """
 
-    selectmany.__doc__ = """Performs a one-to-many projection on source
+Query.selectmany.__func__.__doc__ = """Performs a one-to-many projection on source
 
     Arguments:
       selector       -- Callable, accepting one or two arguments depending on
@@ -554,7 +564,7 @@ class Query(object):
       [0, 1, 1, 2, 2, 3]
     """
 
-    take.__doc__ = """Returns a Query that only yields the first count items of source.
+Query.take.__func__.__doc__ = """Returns a Query that only yields the first count items of source.
 
     Arguments:
       count -- the number of items to yield
@@ -571,7 +581,7 @@ class Query(object):
       [1, 2, 3]
     """
 
-    skip.__doc__ = """Returns a Query that yields source items after skipping count.
+Query.skip.__func__.__doc__ = """Returns a Query that yields source items after skipping count.
 
     Arguments:
       count -- the number of items to skip
@@ -588,7 +598,7 @@ class Query(object):
       []
     """
 
-    takewhile.__doc__ = """Returns a Query that yields items while predicate is true.
+Query.takewhile.__func__.__doc__ = """Returns a Query that yields items while predicate is true.
 
     Arguments:
       predicate  -- Callable, accepting one or two items depending on
@@ -610,7 +620,7 @@ class Query(object):
       [1, 2]
     """
 
-    skipwhile.__doc__ = """Returns a Query that skips items while predicate is true.
+Query.skipwhile.__func__.__doc__ = """Returns a Query that skips items while predicate is true.
 
     Arguments:
       predicate  -- Callable, accepting one or two items depending on
@@ -633,7 +643,7 @@ class Query(object):
       [4, 8]
     """
 
-    join.__doc__ = """Performs a one-to-one join to other.
+Query.join.__func__.__doc__ = """Performs a one-to-one join to other.
 
       Arguments:
         other            -- Iterable that source is joined to.
@@ -668,7 +678,7 @@ class Query(object):
         [(2, 2), (1, 1), (1, 4), (0, 0), (0, 3)]
     """
 
-    groupjoin.__doc__ = """Preforms a one-to-many join to other.
+Query.groupjoin.__func__.__doc__ = """Preforms a one-to-many join to other.
 
         Arguments:
             other            -- Iterable that source is joined to.
@@ -698,7 +708,7 @@ class Query(object):
           [(1, []), (2, ['of']), (3, ['The', 'War', 'the']), (4, []), (5, [])]
     """
 
-    concat.__doc__ =  """Returns a Query containing the concatenation of source and other.
+Query.concat.__func__.__doc__ =  """Returns a Query containing the concatenation of source and other.
 
     Arguments:
       other - The iterable to concatenate
@@ -713,7 +723,7 @@ class Query(object):
       [1, 2, 3, 4, 5]
     """
 
-    orderby.__doc__ = """Returns an OrderedQuery yielding source items ordered by key.
+Query.orderby.__func__.__doc__ = """Returns an OrderedQuery yielding source items ordered by key.
 
     Arguments:
       key -- Callable, accepting one arg, used to order the items
@@ -727,7 +737,7 @@ class Query(object):
       [0, -1, 1, -2, 2]
     """
 
-    orderbydesc.__doc__ = """Returns an OrderedQuery yielding source items in descending order by key.
+Query.orderbydesc.__func__.__doc__ = """Returns an OrderedQuery yielding source items in descending order by key.
 
     Arguments:
       key -- Callable, accepting one arg, used to order the items
@@ -742,7 +752,7 @@ class Query(object):
     """
 
 
-    groupby.__doc__ = """Returns a Query that yields the processed items grouped by key.
+Query.groupby.__func__.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
     Arguments:
       key             -- Callable, accepting one arg, using for grouping.
@@ -788,7 +798,7 @@ class Query(object):
       'CAT'
      """
 
-    distinct.__doc__ = """Returns a Query containing the distinct items of source.
+Query.distinct.__func__.__doc__ = """Returns a Query containing the distinct items of source.
 
     Arguments:
       key -- Callable, that accepts one arg, which returns a value used to compare
@@ -808,7 +818,7 @@ class Query(object):
      [-2, -1, 0]
     """
 
-    union.__doc__ = """Returns a Query that yields the union of source and other
+Query.union.__func__.__doc__ = """Returns a Query that yields the union of source and other
 
     Arguments:
       other -- Iterable with which the iterm of Query will be unioned
@@ -829,7 +839,7 @@ class Query(object):
       [-2, -1, 0]
     """
 
-    intersection.__doc__ = """Returns a Query that yields the intersection of source and other
+Query.intersection.__func__.__doc__ = """Returns a Query that yields the intersection of source and other
 
     Arguments:
       other -- Iterable with which the items of Query will be intersected.
@@ -851,7 +861,7 @@ class Query(object):
       [1]
     """
 
-    except_.__doc__ = """Returns a Query that yields the items of source that aren't in other
+Query.except_.__func__.__doc__ = """Returns a Query that yields the items of source that aren't in other
 
     Arguments:
       other -- Iterable whose items are excluded from the result
@@ -873,14 +883,14 @@ class Query(object):
       []
     """
 
-    tolist.__doc__ = """Returns a list containing souce items.
+Query.tolist.__func__.__doc__ = """Returns a list containing souce items.
 
     Examples:
       >>> Query('abc').tolist()
       ['a', 'b', 'c']
     """
 
-    todict.__doc__ = """Returns a dictionary containing elementSelector(item) indexed by keySelector(item).
+Query.todict.__func__.__doc__ = """Returns a dictionary containing elementSelector(item) indexed by keySelector(item).
 
     Arguments:
       keySelector     -- Callable, accepting one arg, applied to items to
@@ -902,7 +912,7 @@ class Query(object):
       [('a', 'ALPHA'), ('b', 'BETA'), ('g', 'GAMMA')]
     """
 
-    tolookup.__doc__ = """Returns a Lookup instance containing the source items grouped by key.
+Query.tolookup.__func__.__doc__ = """Returns a Lookup instance containing the source items grouped by key.
 
     Arguments:
       key -- Callable, that accepts arg, which returns a value used to
@@ -921,7 +931,7 @@ class Query(object):
       [-2, 2]
     """
 
-    first.__doc__ = """Returns the first element matching predicate
+Query.first.__func__.__doc__ = """Returns the first element matching predicate
 
     Arguments:
       predicate -- Callable, accepting one argument, that items are matched
@@ -939,7 +949,7 @@ class Query(object):
       'No matches'
     """
 
-    last.__doc__ = """Returns the last element matching predicate
+Query.last.__func__.__doc__ = """Returns the last element matching predicate
 
     Arguments:
       predicate -- Callable, accepting one argument, that items are matched
@@ -957,7 +967,7 @@ class Query(object):
       'No matches'
     """
 
-    single.__doc__ = """Returns the only element to matching predicate
+Query.single.__func__.__doc__ = """Returns the only element to matching predicate
 
     Arguments:
       predicate -- Callable, accepting one argument, that items are matched
@@ -981,7 +991,7 @@ class Query(object):
       LookupError: More than one item found.
     """
 
-    ifempty.__doc__ = """If empty returns a Query containing default
+Query.ifempty.__func__.__doc__ = """If empty returns a Query containing default
 
     Arguments:
       default -- the value the returned Query will contains if there are no
@@ -999,7 +1009,7 @@ class Query(object):
       ['No items']
     """
 
-    all.__doc__ = """Returns whether all elements match predicate
+Query.all.__func__.__doc__ = """Returns whether all elements match predicate
 
     Arguments:
       predicate -- Callable, accepting one argument, that items are matched
@@ -1025,7 +1035,7 @@ class Query(object):
       False
     """
 
-    any.__doc__ = """Returns whether any elements match predicate
+Query.any.__func__.__doc__ = """Returns whether any elements match predicate
 
     Arguments:
       predicate -- Callable, accepting one argument, that items are matched
@@ -1045,7 +1055,7 @@ class Query(object):
       True
     """
 
-    count.__doc__ = """Returns the number of items in source matching predicate.
+Query.count.__func__.__doc__ = """Returns the number of items in source matching predicate.
 
     Arguments:
       predicate - Only items for which predicate(item) is true will be counted.
@@ -1066,7 +1076,7 @@ class Query(object):
       5
     """
 
-    aggregate.__doc__ = """Applies an accumulator function to items.
+Query.aggregate.__func__.__doc__ = """Applies an accumulator function to items.
 
     Arguments:
       seed           -- The initial value
@@ -1126,14 +1136,4 @@ Query.repeat.__doc__ = """Returns a Query that yields element count times.
       >>> list(Query.repeat('SPAM!', 3))
       ['SPAM!', 'SPAM!', 'SPAM!']
     """
-
-_empty = Query([])
-
-class OrderedQuery(Query):
-    def thenby(self, keySelector):
-        return OrderedQuery(self, _sort_keys=(self._sort_keys + (keySelector,)))
-
-    def thenbydesc(self, keySelector):
-        return self.thenby(lambda x: _ReverseKey(keySelector(x)))
-
 
