@@ -766,6 +766,20 @@ OrderedQuery.thenby.__func__.__doc__ = """Returns an OrderedQuery with an additi
       ['of', 'The', 'War', 'the', 'Worlds']
 """
 
+OrderedQuery.thenbydesc.__func__.__doc__ = """Returns an OrderedQuery with an additional descending secondary sort.
+
+    Arguments:
+      keySelector -- Callable, accepting one arg, used to give the secondary sort
+
+    Returns:
+      OrderedQuery yielding source items with an additional descending secondary sort.
+
+    Examples:
+      >>> list(Query('The War of the Worlds'.split())
+      ...     .orderby(len)
+      ...     .thenbydesc(lambda x: x[0]))
+      ['of', 'the', 'War', 'The', 'Worlds']
+"""
 
 Query.groupby.__func__.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
