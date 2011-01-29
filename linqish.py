@@ -1116,6 +1116,26 @@ Query.any.__func__.__doc__ = """Returns whether any elements match predicate
       True
     """
 
+Query.contains.__func__.doc__ = """Returns whether source contains value.
+
+    Arguments:
+      value -- The value to search for
+      key   -- Callable, accepting one arg, used to compare value to items
+
+    Returns:
+      True if an item in source equals value
+      False if no item in source equals value
+      Equality is determined using key. Two objects are considered equal if
+      they have the same key value.
+
+    Examples:
+      >>> Query('ABC').contains('a')
+      False
+
+      >>> Query('ABC').contains('a', str.lower)
+      True
+"""
+
 Query.count.__func__.__doc__ = """Returns the number of items in source matching predicate.
 
     Arguments:
