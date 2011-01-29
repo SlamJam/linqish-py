@@ -1027,6 +1027,31 @@ Query.single.__func__.__doc__ = """Returns the only element to matching predicat
       LookupError: More than one item found.
     """
 
+Query.at.__func__.__doc__ = """Returns (index + 1)th item.
+
+    Arguments:
+      index   -- The zero based index of the item that is returned.
+      default -- The value to return if the item does not exist
+                 because there are less than index + 1 items.
+
+    Returns:
+      The item in source that has the zero-based index of index. If there are
+      fewer than index + 1 items, default is returned instead or, if a value
+      for default was not supplied, a ValueError is raised.
+
+    Examples:
+      >>> Query([1, 2, 3]).at(1)
+      2
+
+      >>> Query([1, 2, 3]).at(3, default='Missing')
+      'Missing'
+
+      >>> Query([1, 2, 3]).at(3)
+      Traceback (most recent call last):
+      ...
+      ValueError: 3, the value of index, is greater than the number of elements.
+"""
+
 Query.ifempty.__func__.__doc__ = """If empty returns a Query containing default
 
     Arguments:
