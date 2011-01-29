@@ -751,6 +751,21 @@ Query.orderbydesc.__func__.__doc__ = """Returns an OrderedQuery yielding source 
       [-2, 2, -1, 1, 0]
     """
 
+OrderedQuery.thenby.__func__.__doc__ = """Returns an OrderedQuery with an additional secondary sort.
+
+    Arguments:
+      keySelector -- Callable, accepting one arg, used to give the secondary sort
+
+    Returns:
+      OrderedQuery yielding source items with an additional secondary sort.
+
+    Examples:
+      >>> list(Query('The War of the Worlds'.split())
+      ...     .orderby(len)
+      ...     .thenby(lambda x: x[0]))
+      ['of', 'The', 'War', 'the', 'Worlds']
+"""
+
 
 Query.groupby.__func__.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
