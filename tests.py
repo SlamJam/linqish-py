@@ -413,6 +413,9 @@ class ElementOperators(TestCase):
 
         self.assertRaises(ValueError, lambda: Query(SizedSource()).at(10))
 
+    def test_at_is_one_greater_than_sequence_source_size(self):
+        self.assertEqual('missing', Query([1, 2, 3]).at(3, 'missing'))
+
     def test_at_is_optimized_for_sequence_sources(self):
         class SequenceSource(collections.Sequence):
             def __len__(self):

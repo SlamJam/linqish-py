@@ -362,7 +362,7 @@ class Query(object):
                 return default
             raise ValueError('{!r}, the value of index, is negative.'.format(index))
 
-        if isinstance(self._source, collections.Sized) and index > len(self._source):
+        if isinstance(self._source, collections.Sized) and index >= len(self._source):
             if default is not _missing:
                 return default
             raise self._at_overrange_error(index)
