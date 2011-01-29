@@ -781,6 +781,13 @@ OrderedQuery.thenbydesc.__func__.__doc__ = """Returns an OrderedQuery with an ad
       ['of', 'the', 'War', 'The', 'Worlds']
 """
 
+Query.reverse.__func__.__doc__ = """Returns a Query that yields the source items in reverse order.
+
+Examples:
+  >>> list(Query([1, 2, 3]).reverse())
+  [3, 2, 1]
+"""
+
 Query.groupby.__func__.__doc__ = """Returns a Query that yields the processed items grouped by key.
 
     Arguments:
