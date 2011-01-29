@@ -1144,6 +1144,21 @@ Query.min.__func__.__doc__ = """Returns the minimum of the values of selector(it
       2
 """
 
+Query.max.__func__.__doc__ = """Returns the maximum of the values of selector(item)
+
+    Arguments:
+      selector -- Callable, accepting one arg, that is applied to source items
+                  to supply the values which are tested.
+
+    Returns:
+      The maximum of the values generating by applying selector to the source
+      items.
+
+    Examples:
+      >>> Query('The War of the Worlds'.split()).max(len)
+      6
+"""
+
 Query.aggregate.__func__.__doc__ = """Applies an accumulator function to items.
 
     Arguments:
