@@ -1112,6 +1112,22 @@ Query.count.__func__.__doc__ = """Returns the number of items in source matching
       5
     """
 
+Query.sum.__func__.__doc__ = """Sums the values of selector(item)
+
+    Arguments:
+      selector -- Callable, accepting one arg, that is applied to source items
+                  to supply the values which are summed.
+
+    Returns:
+      The sum of the values generating by applying selector to the source
+      items.
+
+    Examples:
+      >>> Query('The War of the Worlds'.split()).sum(len)
+      17
+      >>> # 3 + 3 + 2 + 3 + 6 = 17
+"""
+
 Query.aggregate.__func__.__doc__ = """Applies an accumulator function to items.
 
     Arguments:
