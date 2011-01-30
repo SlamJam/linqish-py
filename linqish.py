@@ -967,6 +967,27 @@ Query.tolookup.__func__.__doc__ = """Returns a Lookup instance containing the so
       [-2, 2]
     """
 
+Query.iter_equal.__func__.__doc__ = """Returns whether Query is equal other.
+
+    Arguments:
+      other -- Iterable to compare query to
+      key   -- Callable, accepting one arg, used for comparing items of Query
+               and items of other
+
+    Returns:
+      True if Query equals other; otherwise False.
+      Equality is determined by comparing elements of Query to other
+      one-by-one in order. Items are considered equal if they produce
+      the same value when key is applied to them.
+
+    Examples:
+      >>> Query([1,2,3]).iter_equal((1,2,3))
+      True
+
+      >>> Query([1,2,3]).iter_equal((-1,-2,-3), key=abs)
+      True
+"""
+
 Query.first.__func__.__doc__ = """Returns the first element matching predicate
 
     Arguments:
