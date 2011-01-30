@@ -3,12 +3,12 @@ from distutils.core import setup
 setup(
     name = 'linqish',
     py_modules = ['linqish'],
-    version = '0.5',
+    version = '0.5.2',
     description = 'Iterable manipulation',
     author = 'Henri Wiechers',
     author_email = 'hwiechers@gmail.com',
-    url = 'http://linqish.codeplex.com',
-    download_url = 'http://linqish-py.googlecode.com/files/linqish-0.5.zip',
+    url = 'http://linqish-py.google.com',
+    download_url = 'http://linqish-py.googlecode.com/files/linqish-0.5.2.zip',
     keywords = ['iterable', 'linq'],
     classifiers = [
     'Programming Language :: Python :: 2.7',
