@@ -12,11 +12,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.import collections
 
-from linqish import Query
+import linqish
 import collections
 import itertools
 import unittest
 import sys
+
+from linqish import Query
 
 def _pair(first, second):
     return first, second
