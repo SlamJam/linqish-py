@@ -7,7 +7,7 @@ setup(
     description = 'Iterable manipulation',
     author = 'Henri Wiechers',
     author_email = 'hwiechers@gmail.com',
-    url = 'http://linqish-py.google.com',
+    url = 'http://linqish-py.googlecode.com',
     download_url = 'http://linqish-py.googlecode.com/files/linqish-0.5.2.zip',
     keywords = ['iterable', 'linq'],
     classifiers = [
