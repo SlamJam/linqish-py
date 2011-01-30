@@ -1137,7 +1137,7 @@ Query.any.__func__.__doc__ = """Returns whether any elements match predicate
       True
     """
 
-Query.contains.__func__.doc__ = """Returns whether source contains value.
+Query.contains.__func__.__doc__ = """Returns whether source contains value.
 
     Arguments:
       value -- The value to search for
