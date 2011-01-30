@@ -5,3 +5,5 @@ syntax:glob
 *.pyc
 *.swp
 .idea
+MANIFEST
+dist
