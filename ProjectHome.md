@@ -1,0 +1,1 @@
+An implementation of the .Net Framework's Linq to Objects for Python.
